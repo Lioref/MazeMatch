@@ -1,0 +1,10 @@
+#ifndef MAZEMATCH_GAMEMANAGER_H
+#define MAZEMATCH_GAMEMANAGER_H
+
+
+class GameManager {
+
+};
+
+
+#endif //MAZEMATCH_GAMEMANAGER_H
