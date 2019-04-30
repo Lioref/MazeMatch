@@ -173,7 +173,7 @@ int getNextRow(int currentRow, int currentCol) {
 }
 
 /// Parses maze representation from file, returns -1 if error was encountered, 0 otherwise
-int parseMazeRep(int rows, int cols, ifstream &mazeFile, Maze &maze) {
+int Parser::parseMazeRep(int rows, int cols, ifstream &mazeFile, Maze &maze) {
     int startCtr = 0;
     int endCtr = 0;
     int linesRead = 0;

@@ -19,6 +19,7 @@ public: Parser(std::string path); //constructor
     /// Parses maze from file this->path into maze
     int ParseMazeFile(Maze* maze);
     void PrintBadMazeFilePathError(std::ostream &out = std::cout);
+    int parseMazeRep(int rows, int cols, ifstream &mazeFile, Maze &maze);
 
 private:
     /// Utility struct
