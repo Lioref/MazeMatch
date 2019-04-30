@@ -1,11 +1,4 @@
 #include "Parser.h"
-#include "Maze.h"
-
-#include <regex>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <vector>
 
 using namespace std;
 #define WALL 1
@@ -15,6 +8,9 @@ using namespace std;
 Parser::Parser(std::string path) { //constructor
     this->path = path;
 }
+
+// empty constructor
+Parser::Parser() {}
 
 /* ERROR PRINTING METHODS */
 
@@ -271,3 +267,36 @@ int Parser::ParseMazeFile(Maze *maze) {
     }
 }
 
+/* match command line parsing methods */
+/// check if arg begins with a "-" char
+bool Parser::isArgName(string arg) {
+    return arg[0] == '-';
+}
+
+/// check if given string key is in a given map
+bool Parser::mapHasKey(const map<string, string> dict, string key) {
+    return dict.count(key) > 0;
+}
+
+/// parse maze match command line args
+map<string, string> Parser::getMatchArgs(int argc, char** argv) {
+    // current working directory for default args
+    string workingDir = std::filesystem::current_path().string();
+
+    // init default args map. algo and maze dirs default to working directory
+    std::map<string, string> args;
+    args["maze_path"] = args["algorithm_path"] = workingDir;
+    args["output"] = ""; // this way we cant tell later if we need to create files or not
+
+    // scan argv and extract key value pairs
+    for (int i=1; i<argc; i++) {
+        string currentArg = argv[i]; // copy constructer will cast to string
+        string cleanArg = currentArg.substr(1, currentArg.size()-1); // remove '-' char from name
+
+        // add to arg map if it matches one of the param names
+        if (isArgName(currentArg) and mapHasKey(args, cleanArg)) {
+            args[cleanArg] = argv[i+1];
+        }
+    }
+    return args;
+}
