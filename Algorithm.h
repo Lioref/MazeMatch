@@ -1,6 +1,5 @@
-#ifndef MAZEMATCH_ALGORITHM_H
-#define MAZEMATCH_ALGORITHM_H
 
+#pragma once
 
 #include <iostream>
 #include <random>
@@ -8,7 +7,8 @@
 #include <set>
 #include <tuple>
 #include <cstdlib>
-#include "../AbstractAlgorithm.h"
+#include "AbstractAlgorithm.h"
+#include "AlgorithmRegistration.h"
 
 
 class Algorithm : public AbstractAlgorithm {
@@ -71,6 +71,5 @@ public:
     void printVisited();
 };
 
+using Player_302313630 = Algorithm;
 
-
-#endif //MAZEMATCH_ALGORITHM_H

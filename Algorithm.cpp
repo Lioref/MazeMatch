@@ -224,6 +224,7 @@ void Algorithm::hitWall() {
 /// required function called by game manager.
 /// is called when a player hits a bookmark
 void Algorithm::hitBookmark(int seq) {
+    cout << seq << endl;
     // if we have no row bound, or the new one is better, update it
     if (py != 0 && (yUpperBound < 0 || abs(py) < yUpperBound)) {
         yUpperBound = abs(py);
@@ -258,3 +259,4 @@ void Algorithm::printVisited() {
     }
 }
 
+REGISTER_ALGORITHM(Algorithm)
