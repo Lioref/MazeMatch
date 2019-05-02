@@ -1,6 +1,5 @@
 #include "Algorithm.h"
 
-//TODO - change logic to not need enum "last"
 //TODO - change bookmark logic, it now gets a new parameter "int seq"
 
 using namespace std;
@@ -21,8 +20,8 @@ Algorithm::Algorithm() {
     this->oppositeMoves[RIGHT] = LEFT;
 
     // init last move
-    this->lastMove = LAST;
-    this->lastLastMove = LAST;
+    this->lastMove = BOOKMARK;
+    this->lastLastMove = BOOKMARK;
 
     // init move name map
     this->moveNames[LEFT] = "LEFT";
@@ -30,8 +29,6 @@ Algorithm::Algorithm() {
     this->moveNames[DOWN] = "DOWN";
     this->moveNames[UP] = "UP";
     this->moveNames[BOOKMARK] = "BOOKMARK";
-    this->moveNames[LAST] = "NONE";
-
 }
 
 /// utility functions for moving in possible
@@ -153,11 +150,6 @@ AbstractAlgorithm::Move Algorithm::move() {
     for (auto it=nonWallMoves.begin(); it!=nonWallMoves.end(); ++it) {
         // if current move leads to a visited position under current bound
         // and adds to none visited moves of not.
-        /* DEBUG ASK JOE
-        auto mv = it->first;
-        auto mvx = std::get<0>(it->second);
-        auto mvy = std::get<1>(it->second);
-         */
         posIsVisited = false;
         for (auto vit=visited.begin(); vit!=visited.end(); ++vit) {
             // calcualte bounded coordinates
@@ -224,7 +216,7 @@ void Algorithm::hitWall() {
 /// required function called by game manager.
 /// is called when a player hits a bookmark
 void Algorithm::hitBookmark(int seq) {
-    cout << seq << endl;
+    cout << seq << endl; //TODO sort use of multiple bookmarks to match given header
     // if we have no row bound, or the new one is better, update it
     if (py != 0 && (yUpperBound < 0 || abs(py) < yUpperBound)) {
         yUpperBound = abs(py);
@@ -259,4 +251,3 @@ void Algorithm::printVisited() {
     }
 }
 
-REGISTER_ALGORITHM(Algorithm)

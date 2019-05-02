@@ -6,7 +6,7 @@ class AbstractAlgorithm {
 public:
     virtual ~AbstractAlgorithm(){}
 
-    enum Move { UP, RIGHT, DOWN, LEFT, BOOKMARK, LAST };
+    enum Move { UP, RIGHT, DOWN, LEFT, BOOKMARK};
 
     virtual Move move() = 0;
     virtual void hitWall() = 0;
