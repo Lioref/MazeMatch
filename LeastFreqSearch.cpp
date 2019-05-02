@@ -1,0 +1,303 @@
+#include "LeastFreqSearch.h"
+
+//TODO - change bookmark logic, it now gets a new parameter "int seq"
+
+using namespace std;
+
+/// empty constructer
+LeastFreqSearch::LeastFreqSearch() {
+    // init coordinates
+    this->px = 0;
+    this->py = 0;
+
+    // init visited set
+    this->visited[std::make_tuple(0, 0)] = 1; //TODO change this insert to increment freq in map
+
+    // init opposite moves map
+    this->oppositeMoves[UP] = DOWN;
+    this->oppositeMoves[DOWN] = UP;
+    this->oppositeMoves[LEFT] = RIGHT;
+    this->oppositeMoves[RIGHT] = LEFT;
+
+    // init last move
+    this->lastMove = BOOKMARK;
+    this->lastLastMove = BOOKMARK;
+
+    // init move name map
+    this->moveNames[LEFT] = "LEFT";
+    this->moveNames[RIGHT] = "RIGHT";
+    this->moveNames[DOWN] = "DOWN";
+    this->moveNames[UP] = "UP";
+    this->moveNames[BOOKMARK] = "BOOKMARK";
+}
+
+/// utility functions for moving in possible
+/// directions and a function that calls them
+/// upon choice.
+void LeastFreqSearch::moveLeft() {
+    this->px--;
+    this->lastLastMove = this->lastMove;
+    this->lastMove = LEFT;
+}
+
+void LeastFreqSearch::moveRight() {
+    this->px++;
+    this->lastLastMove = this->lastMove;
+    this->lastMove = RIGHT;
+}
+
+void LeastFreqSearch::moveDown() {
+    this->py--;
+    this->lastLastMove = this->lastMove;
+    this->lastMove = DOWN;
+}
+
+void LeastFreqSearch::moveUp() {
+    this->py++;
+    this->lastLastMove = this->lastMove;
+    this->lastMove = UP;
+}
+
+/// updates the visited map with current position
+/// we maintain bounded coordinates only in the visited map
+void LeastFreqSearch::postMoveUpdate() {
+    // calculate bounded coordinates
+    int boundedX = (xUpperBound > 0) ? posiMod(px, xUpperBound) : px;
+    int boundedY = (yUpperBound > 0) ? posiMod(py, yUpperBound) : py;
+    auto current_pos = std::make_tuple(boundedX, boundedY); //TODO adapt this for use with frequency map + add bounded coords
+    if (visited.count(current_pos) > 0) {
+        visited[current_pos] += 1;
+    } else {
+        visited[current_pos] = 0;
+    }
+}
+
+void LeastFreqSearch::applyMove(Move direction) {
+    // take step in chosen direction
+    if (direction==LEFT) {
+        moveLeft();
+    }
+    else if (direction==RIGHT) {
+        moveRight();
+    }
+    else if (direction==UP) {
+        moveUp();
+    }
+    else {
+        moveDown();
+    }
+    // add new position to visited
+    postMoveUpdate();
+}
+
+/// positive modulo function
+int LeastFreqSearch::posiMod(int num, int div) {
+    return ((num % div) + div) % div;
+}
+
+/// update the coordinates of visited cells to match new
+/// dimension upper bounds
+void LeastFreqSearch::foldVisitedMap() {
+    // init new map for aggregation
+    map<std::tuple<int, int>, int> foldedMap;
+
+    // iterate through existing map, and populate new map
+    for (auto&& [first, second] : visited) {
+        // calculate coordinates relative to bounds
+        int boundedX = (xUpperBound > 0) ? posiMod(std::get<0>(first), xUpperBound) : std::get<0>(first);
+        int boundedY = (yUpperBound > 0) ? posiMod(std::get<1>(first), yUpperBound) : std::get<1>(first);
+        auto boundedPos = make_tuple(boundedX, boundedY);
+
+        // add entry if doesn't exist yet, otherwise aggregate
+        if (foldedMap.count(boundedPos) > 0) {
+            foldedMap[boundedPos] = second;
+        } else {
+            foldedMap[boundedPos] += second;
+        }
+    }
+    // clear old map and replace with new map values
+    visited.clear();
+    visited.insert(foldedMap.begin(), foldedMap.end()); // funky cpp way of merging two maps
+}
+
+/// update the coordinates of walls to match new
+/// dimension upper bounds
+void LeastFreqSearch::foldWallsSet() {
+    // init new set for folded maps
+    set<std::tuple<int, int>> foldedWalls;
+    // iterate through existing set and add bounded walls
+    for (auto pos : walls) {
+        // calculate bounded coordinates
+        int boundedX = (xUpperBound > 0) ? posiMod(std::get<0>(pos), xUpperBound) : std::get<0>(pos);
+        int boundedY = (yUpperBound > 0) ? posiMod(std::get<1>(pos), yUpperBound) : std::get<1>(pos);
+        auto boundedPos = make_tuple(boundedX, boundedY);
+
+        // add to new set if necessary
+        if (foldedWalls.count(boundedPos)==0) {
+            foldedWalls.insert(boundedPos);
+        }
+    }
+    // clear old set and replace with new bounded walls
+    walls.clear();
+    walls.insert(foldedWalls.begin(), foldedWalls.end());
+}
+
+/// get map of possible result positions of next move
+std::map<AbstractAlgorithm::Move, std::tuple<int, int>> LeastFreqSearch::getPossibleMovePositions() {
+    // calculate bounded position
+    int bpx = (xUpperBound > 0) ? posiMod(px, xUpperBound) : px;
+    int bpy = (yUpperBound > 0) ? posiMod(py, yUpperBound) : py;
+    // create return map
+    std::map<Move, std::tuple<int, int>> positions;
+    // calc left move position
+    int leftMoveX = (xUpperBound > 0) ? posiMod(bpx-1, xUpperBound) : bpx-1;
+    positions[LEFT] = std::make_tuple(leftMoveX, bpy);
+
+    // calc right move position
+    int rightMoveX = (xUpperBound > 0) ? posiMod(bpx+1, xUpperBound) : bpx+1;
+    positions[RIGHT] = std::make_tuple(rightMoveX, bpy);
+
+    // calc down move position
+    int downMoveY = (yUpperBound > 0) ? posiMod(bpy+1, yUpperBound) : bpy+1;
+    positions[UP] = std::make_tuple(bpx, downMoveY);
+
+    // calc down move position
+    int upMoveY = (yUpperBound > 0) ? posiMod(bpy-1, yUpperBound) : bpy-1;
+    positions[DOWN] = std::make_tuple(bpx, upMoveY);
+    return positions;
+}
+
+/// required function called by game manager.
+/// returns move of enum type.
+AbstractAlgorithm::Move LeastFreqSearch::move() {
+    // first move is to leave a bookmark
+    if (moveNum == 0) {
+        moveNum++; // inc move count
+        return BOOKMARK;
+    }
+
+    // get all possible candidate moves
+    std::map<Move, std::tuple<int, int>> candidateMoves = getPossibleMovePositions();
+
+    // filter out walls
+    std::map<Move, std::tuple<int, int>> nonWallMoves;
+    for (auto&& [move, pos] : candidateMoves) {
+        // check if current move matches a wall (under current bound)
+        if (walls.count(pos) == 0) {
+            nonWallMoves[move] = pos;
+        }
+    }
+    // filter out visited
+    std::map<Move, std::tuple<int, int>> nonVisitedMoves;
+    bool posIsVisited;
+    for (auto&& [move, pos] : nonWallMoves) {
+        // save only non visited positions
+        if (visited[pos] == 0) {
+            nonVisitedMoves[move] = pos;
+        }
+    }
+
+    // at least one not visited option exists, pick one at random
+    if (!nonVisitedMoves.empty()) {
+        auto it = nonVisitedMoves.begin();
+        std::advance(it, rand() % nonVisitedMoves.size()); // advance iterator to random key
+        Move randMove = it->first;
+        applyMove(randMove);
+        this->moveNum++; // inc move count
+        return randMove; // return chosen move
+    }
+
+    // if only one move is not a wall, we must backtrack. take opposite of last action.
+    if (nonWallMoves.size()==1) {
+        applyMove(oppositeMoves[lastMove]);
+        this->moveNum++; // inc move count
+        return oppositeMoves[lastMove];
+    }
+    else { // all have been visited, pick a non-wall move at random except opposite
+        // remove previous move
+        nonWallMoves.erase(this->oppositeMoves[this->lastMove]);
+        // choose move that results in the least visited position
+        int minFreq = -1;
+        Move minMove = BOOKMARK;
+        for (auto&& [move, pos] : nonWallMoves) {
+            if (minFreq < 0) { // first
+                minFreq = visited[pos];
+                minMove = move;
+            } else {
+                if (visited[pos] < minFreq) {
+                    minFreq = visited[pos];
+                    minMove = move;
+                }
+            }
+        }
+        return minMove;
+    }
+}
+
+/// required function called by game manager.
+/// is called when player hits a wall.
+void LeastFreqSearch::hitWall() {
+    // make bounded position tuple TODO insert bounded coordinates
+    int boundedX = (xUpperBound > 0) ? posiMod(px, xUpperBound) : px;
+    int boundedY = (yUpperBound > 0) ? posiMod(py, yUpperBound) : py;
+    auto position = std::make_tuple(boundedX, boundedY);
+    // mark position as wall
+    walls.insert(position);
+
+    // remove position from visited set
+    visited.erase(position);
+
+    // return to previous position
+    Move tempLast = lastLastMove; // this is the move before steping into a wall
+    applyMove(oppositeMoves[lastMove]); // return to position before wall
+    lastMove = tempLast; // fix the last move to reflect what it was before stepping into the wall
+}
+
+/// required function called by game manager.
+/// is called when a player hits a bookmark
+void LeastFreqSearch::hitBookmark(int seq) {
+    cout << seq << endl; //TODO sort use of multiple bookmarks to match given header
+    // if we have no row bound, or the new one is better, update it
+    bool reduce_bound = false;
+    if (py != 0 && (yUpperBound < 0 || abs(py) < yUpperBound)) {
+        yUpperBound = abs(py);
+        reduce_bound = true;
+    }
+    // if we have no col bound, or the new one is better, update it
+    if (px != 0 && (xUpperBound < 0 || abs(px) < xUpperBound)) {
+        xUpperBound = abs(px);
+        reduce_bound = true;
+    }
+    /*TODO add visited map update implementation. aggregate freqs based on new bounds.*/
+    // update coordinates of visited spaces and walls based on new bound
+    if (reduce_bound) {
+        foldVisitedMap();
+        foldWallsSet();
+    }
+}
+
+/// print the player position, last move and lastlast
+/// move.
+void LeastFreqSearch::print() {
+    std::cout << "Player Position: " << px << " " << py << std::endl;
+    std::cout << "Last Move: " << moveNames[lastMove] << std::endl;
+    std::cout << "Last Last Move: " << moveNames[lastLastMove] << std::endl;
+}
+
+/// print the walls that the player has encountered
+void LeastFreqSearch::printWalls() {
+    std::cout << "coordinates of walls relative to starting player position:" << std::endl;
+    for (auto w = walls.begin(); w != walls.end(); ++w) {
+        std::cout << "X: " << std::get<0>(*w) << ", Y: " << std::get<1>(*w) <<std::endl;
+    }
+}
+
+/// print the coordinates of points the player has visited
+void LeastFreqSearch::printVisited() {
+    std::cout << "coordinates of visited points relative to starting player position:" << std::endl;
+    for (auto [first, second] : visited) {
+        std::cout << "X: " << std::get<0>(first) << ", Y: " << std::get<1>(first) <<std::endl; //TODO update to visited map
+    }
+}
+
+
