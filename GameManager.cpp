@@ -92,7 +92,6 @@ int GameManager::run() {
     for (numSteps=0; numSteps<currentMaze->maxsteps; numSteps++) {
         // make the player move
         currentMove = player->move();
-
         if (currentMove == AbstractAlgorithm::BOOKMARK) {
             setBookmark();
         }
@@ -122,7 +121,6 @@ int GameManager::run() {
 
         // check if end has been reached, if so, log and end
         if (playerRow == std::get<0>(currentMaze->end) && playerCol == std::get<1>(currentMaze->end)) {
-            std::cout << "Succeeded in " << numSteps+1 << " steps" << std::endl;
             mazeSuccess = true;
             break;
         }
