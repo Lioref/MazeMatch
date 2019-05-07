@@ -21,9 +21,8 @@ LIB_OBJS1	:= Algorithm.o
 LIB_OBJS2 	:= LeastFreqSearch.o 
 LIB_OBJS 	:= LeastFreqSearch.so Algorithm.so
 
-.PHONY: clean
-
 all: maze_tournament algorithm_lib1 algorithm_lib2
+libs: algorithm_lib1 algorithm_lib2
 
 maze_tournament: $(EXE_TARGET)
 
@@ -47,7 +46,9 @@ DEPS := $(SRCS:.cpp=.d)
 $(OBJS): %.o : %.cpp
 	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
 
+.PHONY: clean
 clean:
 	rm -f $(OBJS) $(DEPS) $(EXE_TARGET) $(LIB_OBJS)
 
 -include $(DEPS)
+	
