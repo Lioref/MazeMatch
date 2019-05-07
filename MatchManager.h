@@ -8,7 +8,7 @@
 
 using namespace std;
 
-typedef std::map<string, std::map<string, int>> resTable;
+typedef std::map<string, tuple<string, int>> ResTable; // maps algorithm name to puzzle name to number of steps
 
 class MatchManager {
 public:
@@ -30,15 +30,14 @@ private:
     map<string, shared_ptr<Maze>> _mazeMap;
     map<string, function<unique_ptr<AbstractAlgorithm>()>> _algMap;
     vector<void *> _libs;
+    ResTable _resTable;
 
 
     // methods
     MatchManager() = default;
     void loadLibs() const;
-    void freeLibs();
+    void cleanup();
     void loadPuzzles();
-
-
-
+    void printResults();
 };
 

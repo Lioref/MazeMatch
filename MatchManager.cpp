@@ -1,6 +1,7 @@
 #include "MatchManager.h"
 #include "AbstractAlgorithm.h"
 #include "Parser.h"
+#include "GameManager.h"
 #include <filesystem>
 #include <dlfcn.h>
 
@@ -11,9 +12,26 @@ namespace fs = std::filesystem;
 MatchManager MatchManager::_singleton;
 
 void MatchManager::run() {
-    auto alg = _singleton._algMap.begin()->second;
-    shared_ptr<AbstractAlgorithm> a = alg();
-    a->move();
+    // init params
+    string outPath = argMap["output"];
+    for (auto algIt=_singleton._algMap.begin() ; algIt != _singleton._algMap.end() ; ++algIt) {
+        for (auto mazeIt=_singleton._mazeMap.begin() ; mazeIt != _singleton._mazeMap.end() ; ++mazeIt) {
+            GameManager gameManager(mazeIt->second, (algIt->second)());
+            int numSteps = gameManager.run();
+            _resTable[algIt->first] = make_tuple(mazeIt->first, numSteps);
+            if (fs::is_directory(outPath)) {
+                if (outPath != "")  {
+                    string fullOutPath = outPath + mazeIt->first + "_" + algIt->first + ".output";
+                    gameManager.saveMoveLog(fullOutPath);
+                }
+                if (DEBUG) { // save logs for debug
+                    gameManager.savePositionLog(outPath + mazeIt->first + "_" + algIt->first + ".log");
+                }
+            }
+        }
+    }
+    printResults();
+    cleanup();
 }
 
 void MatchManager::setup() {
@@ -24,7 +42,6 @@ void MatchManager::setup() {
 void MatchManager::addAlgorithm(function<unique_ptr<AbstractAlgorithm>()> factory) {
     _singleton._algMap[_singleton._currentFile] = factory;
 }
-
 
 void MatchManager::loadLibs() const {
     void* lib_handle;
@@ -46,8 +63,10 @@ void MatchManager::loadLibs() const {
     }
 }
 
-void MatchManager::freeLibs() {
+void MatchManager::cleanup() {
     _algMap.clear();
+    _mazeMap.clear();
+    _resTable.clear();
     for (auto lib : _libs) {
         dlclose(lib);
     }
@@ -72,5 +91,9 @@ void MatchManager::loadPuzzles() {
     if (DEBUG) {
         cout << "Loaded " << _mazeMap.size() << " puzzles" << endl;
     }
+}
+
+void MatchManager::printResults() {
+    // TODO implement the printer
 }
 
