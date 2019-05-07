@@ -1,6 +1,9 @@
-
+#include "MatchManager.h"
 #include "AlgorithmRegistration.h"
 
-AlgorithmRegistration::AlgorithmRegistration(std::function<std::unique_ptr<AbstractAlgorithm>()> func) {
-    algos.emplace_back(func);
+using namespace std;
+
+AlgorithmRegistration::AlgorithmRegistration(function<unique_ptr<AbstractAlgorithm>()> func) {
+    cout << "Registering alg" << endl;
+    MatchManager::addAlgorithm(func);
 }

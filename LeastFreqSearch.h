@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <assert.h>
 #include "AbstractAlgorithm.h"
+#include "AlgorithmRegistration.h"
 
 
 class LeastFreqSearch : public AbstractAlgorithm {

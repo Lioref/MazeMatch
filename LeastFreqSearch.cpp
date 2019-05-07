@@ -339,4 +339,5 @@ void LeastFreqSearch::printVisited() {
     }
 }
 
+REGISTER_ALGORITHM(LeastFreqSearch)
 
