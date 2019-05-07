@@ -6,7 +6,6 @@
 #include <set>
 #include <tuple>
 #include <cstdlib>
-#include "AbstractAlgorithm.h"
 #include "AlgorithmRegistration.h"
 
 

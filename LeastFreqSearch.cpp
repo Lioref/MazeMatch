@@ -261,7 +261,7 @@ AbstractAlgorithm::Move LeastFreqSearch::move() {
     if (nonWallMoves.size()==1) {
         applyMove(oppositeMoves[lastMove]);
         this->moveNum++; // inc move count
-        return oppositeMoves[lastMove];
+        return lastMove;
     }
     else { // all have been visited, pick a non-wall move at random except opposite
         // remove previous move TODO this is a problem if the only non wall move map is empty (shouldn't happen)
