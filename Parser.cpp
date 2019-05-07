@@ -5,10 +5,6 @@ using namespace std;
 #define PASS 0
 #define ERROR 2
 
-Parser::Parser(std::string path) { //constructor
-    this->path = path;
-}
-
 // empty constructor
 Parser::Parser() {}
 

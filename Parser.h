@@ -19,7 +19,6 @@ class Parser {
     string path;
 
 public:
-    Parser(std::string path); //constructor
     Parser();
     /// Parses maze from file this->path into maze
     int parseMazeFile(shared_ptr<Maze> maze, filesystem::path mazePath);
