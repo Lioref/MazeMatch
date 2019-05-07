@@ -58,6 +58,30 @@ void LeastFreqSearch::moveUp() {
     this->lastMove = UP;
 }
 
+/// set a bookmark at current position. if the
+/// position allready exists in the bookmark map
+/// erase it and add it with the new index
+void LeastFreqSearch::setBookmark() {
+    // create position tuple
+    auto currentPosition = std::make_tuple(px, py);
+
+    // if bookmark exists already, find the current seq
+    int existingSeq = 0;
+    for (auto&& [seq, pos] : bookmarks) {
+        if (get<0>(pos) == px && get<1>(pos) == py) {
+            existingSeq = seq;
+            break;
+        }
+    }
+    // if bookmark exists, erase it
+    if (existingSeq) {
+        bookmarks.erase(existingSeq);
+    }
+    // add current position with new seq
+    bookmarks[nextBookmarkSeq] = currentPosition;
+    nextBookmarkSeq++;
+}
+
 /// updates the visited map with current position
 /// we maintain bounded coordinates only in the visited map
 void LeastFreqSearch::postMoveUpdate() {
@@ -157,13 +181,13 @@ std::map<AbstractAlgorithm::Move, std::tuple<int, int>> LeastFreqSearch::getPoss
     int rightMoveX = (xUpperBound > 0) ? posiMod(bpx+1, xUpperBound) : bpx+1;
     positions[RIGHT] = std::make_tuple(rightMoveX, bpy);
 
-    // calc down move position
-    int downMoveY = (yUpperBound > 0) ? posiMod(bpy+1, yUpperBound) : bpy+1;
-    positions[UP] = std::make_tuple(bpx, downMoveY);
+    // calc up move position
+    int upMoveY = (yUpperBound > 0) ? posiMod(bpy+1, yUpperBound) : bpy+1;
+    positions[UP] = std::make_tuple(bpx, upMoveY);
 
     // calc down move position
-    int upMoveY = (yUpperBound > 0) ? posiMod(bpy-1, yUpperBound) : bpy-1;
-    positions[DOWN] = std::make_tuple(bpx, upMoveY);
+    int downMoveY = (yUpperBound > 0) ? posiMod(bpy-1, yUpperBound) : bpy-1;
+    positions[DOWN] = std::make_tuple(bpx, downMoveY);
     return positions;
 }
 
@@ -173,6 +197,7 @@ AbstractAlgorithm::Move LeastFreqSearch::move() {
     // first move is to leave a bookmark
     if (moveNum == 0) {
         moveNum++; // inc move count
+        setBookmark();
         return BOOKMARK;
     }
 
@@ -189,7 +214,6 @@ AbstractAlgorithm::Move LeastFreqSearch::move() {
     }
     // filter out visited
     std::map<Move, std::tuple<int, int>> nonVisitedMoves;
-    bool posIsVisited;
     for (auto&& [move, pos] : nonWallMoves) {
         // save only non visited positions
         if (visited[pos] == 0) {
@@ -214,11 +238,12 @@ AbstractAlgorithm::Move LeastFreqSearch::move() {
         return oppositeMoves[lastMove];
     }
     else { // all have been visited, pick a non-wall move at random except opposite
-        // remove previous move
+        // remove previous move TODO this is a problem if the only non wall move map is empty (shouldn't happen)
         nonWallMoves.erase(this->oppositeMoves[this->lastMove]);
         // choose move that results in the least visited position
         int minFreq = -1;
         Move minMove = BOOKMARK;
+        assert(!nonWallMoves.empty());
         for (auto&& [move, pos] : nonWallMoves) {
             if (minFreq < 0) { // first
                 minFreq = visited[pos];
@@ -230,6 +255,7 @@ AbstractAlgorithm::Move LeastFreqSearch::move() {
                 }
             }
         }
+        applyMove(minMove);
         return minMove;
     }
 }
@@ -256,20 +282,33 @@ void LeastFreqSearch::hitWall() {
 /// required function called by game manager.
 /// is called when a player hits a bookmark
 void LeastFreqSearch::hitBookmark(int seq) {
-    cout << seq << endl; //TODO sort use of multiple bookmarks to match given header
+    // seq must be in bookmark map
+    assert(bookmarks.count(seq) > 0);
+
+    // get the position of the bookmark we hit
+    auto currentMark = bookmarks[seq];
+
+    // calc bounded coordinates for current mark and position
+    int boundedMarkX = (xUpperBound > 0) ? posiMod(get<0>(currentMark), xUpperBound) : get<0>(currentMark);
+    int boundedMarkY = (yUpperBound > 0) ? posiMod(get<1>(currentMark), yUpperBound) : get<1>(currentMark);
+
+    int boundedPosX = (xUpperBound > 0) ? posiMod(px, xUpperBound) : px;
+    int boundedPosY = (yUpperBound > 0) ? posiMod(py, yUpperBound) : py;
+
+    // calc relative position to mark
+    auto relativePosition = make_tuple(boundedPosX-boundedMarkX, boundedPosY-boundedMarkY);
+
     // if we have no row bound, or the new one is better, update it
     bool reduce_bound = false;
-    if (py != 0 && (yUpperBound < 0 || abs(py) < yUpperBound)) {
-        yUpperBound = abs(py);
+    if (get<1>(relativePosition) != 0 && (yUpperBound < 0 || abs(get<1>(relativePosition)) < yUpperBound)) {
+        yUpperBound = abs(get<1>(relativePosition));
         reduce_bound = true;
     }
     // if we have no col bound, or the new one is better, update it
-    if (px != 0 && (xUpperBound < 0 || abs(px) < xUpperBound)) {
-        xUpperBound = abs(px);
+    if (get<0>(relativePosition) != 0 && (xUpperBound < 0 || abs(get<0>(relativePosition)) < xUpperBound)) {
+        xUpperBound = abs(get<0>(relativePosition));
         reduce_bound = true;
     }
-    /*TODO add visited map update implementation. aggregate freqs based on new bounds.*/
-    // update coordinates of visited spaces and walls based on new bound
     if (reduce_bound) {
         foldVisitedMap();
         foldWallsSet();

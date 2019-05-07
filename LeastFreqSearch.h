@@ -8,6 +8,7 @@
 #include <set>
 #include <tuple>
 #include <cstdlib>
+#include <assert.h>
 #include "AbstractAlgorithm.h"
 
 
@@ -19,9 +20,11 @@ private:
     int moveNum = 0;
     int yUpperBound = -1; // default
     int xUpperBound = -1; // default
+    int nextBookmarkSeq = 1;
     std::map<Move , Move > oppositeMoves;
     std::map<std::tuple<int, int>, int> visited; //TODO replace this set with a map that saves frequencies
     std::set<std::tuple<int, int>> walls;
+    std::map<int ,std::tuple<int, int>> bookmarks; // maps position to bookmark number
     std::map<Move , std::string> moveNames;
     Move lastMove;
     Move lastLastMove;
@@ -63,6 +66,11 @@ public:
     /// required function called by game manager.
     /// is called when a player hits a bookmark
     void hitBookmark(int seq) override;
+
+    /// set a bookmark at current position. if the
+    /// position allready exists in the bookmark map
+    /// erase it and add it with the new index
+    void setBookmark();
 
     /// print the player position, last move and lastlast
     /// move.
