@@ -169,7 +169,7 @@ int getNextRow(int currentRow, int currentCol) {
 }
 
 /// Parses maze representation from file, returns -1 if error was encountered, 0 otherwise
-int Parser::parseMazeRep(int rows, int cols, ifstream &mazeFile, Maze &maze) {
+int Parser::parseMazeRep(int rows, int cols, ifstream &mazeFile, shared_ptr<Maze> maze) {
     int startCtr = 0;
     int endCtr = 0;
     int linesRead = 0;
@@ -186,30 +186,30 @@ int Parser::parseMazeRep(int rows, int cols, ifstream &mazeFile, Maze &maze) {
             char currentChar = line[charsRead];
             charsRead++;
             if (currentChar == '#') { // WALL
-                maze.setMatrixVal(i, j, WALL);
+                maze->setMatrixVal(i, j, WALL);
             } else if (currentChar == ' ') { // FREE
-                maze.setMatrixVal(i, j, PASS);
+                maze->setMatrixVal(i, j, PASS);
             } else if (currentChar == '@') { // PLAYER START POSITION
-                maze.setMatrixVal(i, j, PASS);
-                maze.setStart(make_tuple(i, j));
+                maze->setMatrixVal(i, j, PASS);
+                maze->setStart(make_tuple(i, j));
                 startCtr++;
             } else if (currentChar == '$') { // TREASURE POSITION
-                maze.setMatrixVal(i, j, PASS);
-                maze.setEnd(make_tuple(i, j));
+                maze->setMatrixVal(i, j, PASS);
+                maze->setEnd(make_tuple(i, j));
                 endCtr++;
             } else if (currentChar == '\r') { // deal with '\r' in the middle of line
-                maze.setMatrixVal(i, j, PASS);
+                maze->setMatrixVal(i, j, PASS);
                 j = getNextCol(cols, j);
                 break;
             } else {
-                maze.setMatrixVal(i, j, ERROR); // ERROR in char
+                maze->setMatrixVal(i, j, ERROR); // ERROR in char
                 mazeErrorVector.push_back(make_tuple(i, j, currentChar));
             }
             j = getNextCol(cols, j);
         }
         // add missing columns if needed
         for (j = charsRead ;j < cols ; j++) {
-            maze.setMatrixVal(i, j, PASS);
+            maze->setMatrixVal(i, j, PASS);
         }
         j = getNextCol(cols, j);
         i = getNextRow(i, j);
@@ -217,7 +217,7 @@ int Parser::parseMazeRep(int rows, int cols, ifstream &mazeFile, Maze &maze) {
     // add missing lines if needed
     for (i=linesRead ; i<rows ; i++) {
         for (j=0 ; j<cols ; j++) {
-            maze.setMatrixVal(i, j, PASS);
+            maze->setMatrixVal(i, j, PASS);
         }
     }
     // print all maze representation errors
@@ -240,7 +240,7 @@ int Parser::parseMazeRep(int rows, int cols, ifstream &mazeFile, Maze &maze) {
 
 /* COMPLETE PARSING METHOD  */
 /// Parses maze from file to maze object, returns -2 for error in maze file path, -1 for error in maze representation, otherwise 0
-int Parser::parseMazeFile(Maze *maze) {
+int Parser::parseMazeFile(shared_ptr<Maze> maze) {
     MazeInfo* info;
     int linesRead = 0;
     //Check maze file exists
@@ -259,7 +259,7 @@ int Parser::parseMazeFile(Maze *maze) {
         maze->cols = info->cols;
         delete(info);
         // parse the maze into the matrix
-        if (parseMazeRep(maze->rows, maze->cols, mazeFile, *maze) == -1) {
+        if (parseMazeRep(maze->rows, maze->cols, mazeFile, maze) == -1) {
             return -1;
         }
         //std::cout << *maze;

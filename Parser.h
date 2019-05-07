@@ -22,9 +22,9 @@ public:
     Parser(std::string path); //constructor
     Parser();
     /// Parses maze from file this->path into maze
-    int parseMazeFile(Maze *maze);
+    int parseMazeFile(shared_ptr<Maze> maze);
     void PrintBadMazeFilePathError(std::ostream &out = std::cout);
-    int parseMazeRep(int rows, int cols, ifstream &mazeFile, Maze &maze);
+    int parseMazeRep(int rows, int cols, ifstream &mazeFile, shared_ptr<Maze> maze);
 
     /// parse command line args for match
     map<string, string> getMatchArgs(int argc, char** argv);
