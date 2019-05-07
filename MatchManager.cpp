@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <dlfcn.h>
 
-#define DEBUG 1
+#define DEBUG 0
 
 // TODO - take care of file paths with / and without /
 
@@ -20,7 +20,7 @@ void MatchManager::run() {
         for (auto mazeIt=_singleton._mazeMap.begin() ; mazeIt != _singleton._mazeMap.end() ; ++mazeIt) {
             GameManager gameManager(mazeIt->second, (algIt->second)());
             int numSteps = gameManager.run();
-            _resTable[algIt->first] = make_tuple(mazeIt->first, numSteps);
+            _resTable[algIt->first][mazeIt->first] = numSteps;
             if (fs::is_directory(outPath)) {
                 if (outPath != "")  {
                     string fullOutPath = outPath + mazeIt->first + "_" + algIt->first + ".output";
