@@ -3,7 +3,6 @@
 
 using namespace std;
 
-AlgorithmRegistration::AlgorithmRegistration(function<unique_ptr<AbstractAlgorithm>()> func) {
-    cout << "Registering alg" << endl;
-    MatchManager::addAlgorithm(func);
+AlgorithmRegistration::AlgorithmRegistration(function<unique_ptr<AbstractAlgorithm>()> factory) {
+    MatchManager::addAlgorithm(factory);
 }
