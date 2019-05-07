@@ -93,7 +93,51 @@ void MatchManager::loadPuzzles() {
     }
 }
 
+void MatchManager::printSeperator(unsigned long len) {
+    cout << string(len, '-') << endl;
+}
+
+
 void MatchManager::printResults() {
-    // TODO implement the printer
+    // get list of algorithm names
+    list<string> algoNames;
+    unsigned long algMaxLen = 0;
+    for (auto&& [name, algs] : _algMap) {
+        algoNames.push_back(name);
+        algMaxLen = (name.size() > algMaxLen || !algMaxLen) ? name.size() : algMaxLen;
+    }
+    // get list of maze names
+    list<string> mazeNames;
+    unsigned long mazeMaxLen = 0;
+    for (auto&& [name, maze] : _mazeMap) {
+        mazeNames.push_back(name);
+        mazeMaxLen = (name.size() > mazeMaxLen || !mazeMaxLen) ? name.size() : mazeMaxLen;
+    }
+    // print top row
+    unsigned long sepLen = (mazeNames.size())*(mazeMaxLen+1) + algMaxLen + mazeNames.size() + 3 ;
+    printSeperator(sepLen);
+    cout << "|" << string(algMaxLen+1, ' ') << "|";
+    for (auto&& name : mazeNames) {
+        cout << name << string(mazeMaxLen-name.size()+1, ' ') << "|";
+    }
+    cout << endl;
+    printSeperator(sepLen);
+
+    // print row for each algo
+    for (string& alg : algoNames) {
+        cout << "|" << alg << string(algMaxLen-alg.size()+1, ' ') << "|";
+        for (string& maze : mazeNames) {
+            if (_resTable[alg][maze] < 0) {
+                cout << string(mazeMaxLen-1, ' ') << _resTable[alg][maze] << "|";
+            } else {
+                int precedingSpaces = mazeMaxLen-ceil(log10(_resTable[alg][maze]))+1;
+                cout << string(precedingSpaces, ' ') << _resTable[alg][maze] << "|";
+            }
+        }
+        cout << endl;
+        printSeperator(sepLen);
+    }
+
+
 }
 

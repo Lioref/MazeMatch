@@ -3,12 +3,14 @@
 #include <map>
 #include <functional>
 #include <memory>
+#include <list>
 #include "AbstractAlgorithm.h"
 #include "Maze.h"
+#include <math.h>
 
 using namespace std;
 
-typedef std::map<string, tuple<string, int>> ResTable; // maps algorithm name to puzzle name to number of steps
+typedef std::map<string, map<string, int>> ResTable; // maps algorithm name to puzzle name to number of steps
 
 class MatchManager {
 public:
@@ -39,5 +41,8 @@ private:
     void cleanup();
     void loadPuzzles();
     void printResults();
+    void printSeperator(unsigned long len);
+
+
 };
 

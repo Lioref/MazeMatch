@@ -122,14 +122,9 @@ int GameManager::run() {
 
         // check if end has been reached, if so, log and end
         if (playerRow == std::get<0>(currentMaze->end) && playerCol == std::get<1>(currentMaze->end)) {
-            std::cout << "Succeeded in " << numSteps+1 << " steps" << std::endl;
             mazeSuccess = true;
             break;
         }
-    }
-    // if target wasn't reached, print.
-    if (!mazeSuccess) {
-        std::cout << "Failed to solve maze in " << currentMaze->maxsteps << " steps" << std::endl;
     }
     return (mazeSuccess ? (numSteps+1) : -1);
 }
