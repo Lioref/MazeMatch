@@ -7,6 +7,8 @@
 
 #define DEBUG 1
 
+// TODO - take care of file paths with / and without /
+
 namespace fs = std::filesystem;
 
 MatchManager MatchManager::_singleton;
