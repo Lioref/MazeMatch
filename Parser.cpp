@@ -240,7 +240,7 @@ int Parser::parseMazeRep(int rows, int cols, ifstream &mazeFile, Maze &maze) {
 
 /* COMPLETE PARSING METHOD  */
 /// Parses maze from file to maze object, returns -2 for error in maze file path, -1 for error in maze representation, otherwise 0
-int Parser::ParseMazeFile(Maze *maze) {
+int Parser::parseMazeFile(Maze *maze) {
     MazeInfo* info;
     int linesRead = 0;
     //Check maze file exists
