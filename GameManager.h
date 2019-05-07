@@ -45,7 +45,7 @@ public:
 
     /// run the player through a game for the number of
     /// steps specified by the maze maxsteps attribute
-    void run();
+    int run();
 
     /// save move log
     int saveMoveLog(std::string path);

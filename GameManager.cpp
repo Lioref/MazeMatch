@@ -81,14 +81,15 @@ void GameManager::setBookmark() {
 
 /// run the player through a game for the number of
 /// steps specified by the maze maxsteps attribute
-void GameManager::run() {
+int GameManager::run() {
     // init vars
+    int numSteps; // steps counter
     AbstractAlgorithm::Move currentMove;
     std::pair<int, int> tempPosition;
     int tempPlayerRow, tempPlayerCol; // temporary vars for calculating next player position
 
     // run loop
-    for (int i=0; i<currentMaze->maxsteps; i++) {
+    for (numSteps=0; numSteps<currentMaze->maxsteps; numSteps++) {
         // make the player move
         currentMove = player->move();
 
@@ -121,7 +122,7 @@ void GameManager::run() {
 
         // check if end has been reached, if so, log and end
         if (playerRow == std::get<0>(currentMaze->end) && playerCol == std::get<1>(currentMaze->end)) {
-            std::cout << "Succeeded in " << i+1 << " steps" << std::endl;
+            std::cout << "Succeeded in " << numSteps+1 << " steps" << std::endl;
             mazeSuccess = true;
             break;
         }
@@ -130,6 +131,7 @@ void GameManager::run() {
     if (!mazeSuccess) {
         std::cout << "Failed to solve maze in " << currentMaze->maxsteps << " steps" << std::endl;
     }
+    return (mazeSuccess ? (numSteps+1) : -1);
 }
 
 
