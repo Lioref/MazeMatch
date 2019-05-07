@@ -240,11 +240,11 @@ int Parser::parseMazeRep(int rows, int cols, ifstream &mazeFile, shared_ptr<Maze
 
 /* COMPLETE PARSING METHOD  */
 /// Parses maze from file to maze object, returns -2 for error in maze file path, -1 for error in maze representation, otherwise 0
-int Parser::parseMazeFile(shared_ptr<Maze> maze) {
+int Parser::parseMazeFile(shared_ptr<Maze> maze, filesystem::path mazePath) {
     MazeInfo* info;
     int linesRead = 0;
     //Check maze file exists
-    ifstream mazeFile(this->path.c_str());
+    ifstream mazeFile(mazePath);
     if (!mazeFile.is_open()) {
         PrintBadMazeFilePathError();
         return -2;
