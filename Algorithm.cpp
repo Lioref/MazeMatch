@@ -112,7 +112,6 @@ std::map<AbstractAlgorithm::Move, std::tuple<int, int>> Algorithm::getPossibleMo
 /// returns move of enum type.
 AbstractAlgorithm::Move Algorithm::move() {
     // first move is to leave a bookmark
-    std::cout << "Moving" << endl;
     if (moveNum == 0) {
         moveNum++; // inc move count
         return BOOKMARK;
@@ -215,7 +214,8 @@ void Algorithm::hitWall() {
 /// required function called by game manager.
 /// is called when a player hits a bookmark
 void Algorithm::hitBookmark(int seq) {
-    cout << seq << endl; //TODO sort use of multiple bookmarks to match given header
+    if (seq > 1) {
+    }
     // if we have no row bound, or the new one is better, update it
     if (py != 0 && (yUpperBound < 0 || abs(py) < yUpperBound)) {
         yUpperBound = abs(py);
