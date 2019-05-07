@@ -16,8 +16,6 @@ int main(int argc, char** argv) {
 
     manager.setup();
     manager.run();
-
-
     return 0;
 
 }

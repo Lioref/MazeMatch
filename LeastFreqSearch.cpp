@@ -1,6 +1,5 @@
 #include "LeastFreqSearch.h"
 
-//TODO - change bookmark logic, it now gets a new parameter "int seq"
 
 using namespace std;
 
@@ -11,7 +10,7 @@ LeastFreqSearch::LeastFreqSearch() {
     this->py = 0;
 
     // init visited set
-    this->visited[std::make_tuple(0, 0)] = 1; //TODO change this insert to increment freq in map
+    this->visited[std::make_tuple(0, 0)] = 1;
 
     // init opposite moves map
     this->oppositeMoves[UP] = DOWN;
@@ -88,7 +87,7 @@ void LeastFreqSearch::postMoveUpdate() {
     // calculate bounded coordinates
     int boundedX = (xUpperBound > 0) ? posiMod(px, xUpperBound) : px;
     int boundedY = (yUpperBound > 0) ? posiMod(py, yUpperBound) : py;
-    auto current_pos = std::make_tuple(boundedX, boundedY); //TODO adapt this for use with frequency map + add bounded coords
+    auto current_pos = std::make_tuple(boundedX, boundedY);
     if (visited.count(current_pos) > 0) {
         visited[current_pos] += 1;
     } else {
@@ -108,6 +107,7 @@ void LeastFreqSearch::applyMove(Move direction) {
         moveUp();
     }
     else {
+        assert(direction != BOOKMARK);
         moveDown();
     }
     // add new position to visited
@@ -196,9 +196,8 @@ std::map<AbstractAlgorithm::Move, std::tuple<int, int>> LeastFreqSearch::getPoss
 AbstractAlgorithm::Move LeastFreqSearch::getLeastVisitedMove(map<AbstractAlgorithm::Move, std::tuple<int, int>> nonWallMoves) {
     // erase the backtracking move if exists in map
     nonWallMoves.erase(this->oppositeMoves[this->lastMove]);
-
+    assert(nonWallMoves.size() > 0);
     // get min visited count
-    map<std::tuple<int, int>, int> posVisits;
     int minVisits = -1;
     for (auto&& [mv, pos] : nonWallMoves) {
         minVisits = (visited[pos] < minVisits || minVisits < 0) ? visited[pos] : minVisits;
@@ -212,6 +211,7 @@ AbstractAlgorithm::Move LeastFreqSearch::getLeastVisitedMove(map<AbstractAlgorit
         }
     }
     // choose random min action
+    assert(minMoves.size() > 0);
     auto minMovesItr = minMoves.begin();
     advance(minMovesItr, rand() % minMoves.size());
     return *minMovesItr;
@@ -238,6 +238,8 @@ AbstractAlgorithm::Move LeastFreqSearch::move() {
             nonWallMoves[move] = pos;
         }
     }
+
+    assert(nonWallMoves.size()>0);
     // filter out visited
     std::map<Move, std::tuple<int, int>> nonVisitedMoves;
     for (auto&& [move, pos] : nonWallMoves) {
@@ -261,11 +263,9 @@ AbstractAlgorithm::Move LeastFreqSearch::move() {
     if (nonWallMoves.size()==1) {
         applyMove(oppositeMoves[lastMove]);
         this->moveNum++; // inc move count
-        return oppositeMoves[lastMove];
+        return lastMove;
     }
     else { // all have been visited, pick a non-wall move at random except opposite
-        // remove previous move TODO this is a problem if the only non wall move map is empty (shouldn't happen)
-        nonWallMoves.erase(this->oppositeMoves[this->lastMove]);
         // choose move that results in the least visited position
         Move minMove = getLeastVisitedMove(nonWallMoves);
         applyMove(minMove);
@@ -276,7 +276,7 @@ AbstractAlgorithm::Move LeastFreqSearch::move() {
 /// required function called by game manager.
 /// is called when player hits a wall.
 void LeastFreqSearch::hitWall() {
-    // make bounded position tuple TODO insert bounded coordinates
+    // make bounded position tuple
     int boundedX = (xUpperBound > 0) ? posiMod(px, xUpperBound) : px;
     int boundedY = (yUpperBound > 0) ? posiMod(py, yUpperBound) : py;
     auto position = std::make_tuple(boundedX, boundedY);
@@ -348,7 +348,7 @@ void LeastFreqSearch::printWalls() {
 void LeastFreqSearch::printVisited() {
     std::cout << "coordinates of visited points relative to starting player position:" << std::endl;
     for (auto [first, second] : visited) {
-        std::cout << "X: " << std::get<0>(first) << ", Y: " << std::get<1>(first) <<std::endl; //TODO update to visited map
+        std::cout << "X: " << std::get<0>(first) << ", Y: " << std::get<1>(first) << "visited: " << second << std::endl;
     }
 }
 
