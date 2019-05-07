@@ -86,7 +86,6 @@ void GameManager::run() {
     AbstractAlgorithm::Move currentMove;
     std::pair<int, int> tempPosition;
     int tempPlayerRow, tempPlayerCol; // temporary vars for calculating next player position
-    int bookmarkRow, bookmarkCol; // position of current bookmark
 
     // run loop
     for (int i=0; i<currentMaze->maxsteps; i++) {

@@ -1,7 +1,5 @@
 #include "Algorithm.h"
 
-//TODO - change bookmark logic, it now gets a new parameter "int seq"
-
 using namespace std;
 
 /// empty constructer
@@ -114,6 +112,7 @@ std::map<AbstractAlgorithm::Move, std::tuple<int, int>> Algorithm::getPossibleMo
 /// returns move of enum type.
 AbstractAlgorithm::Move Algorithm::move() {
     // first move is to leave a bookmark
+    std::cout << "Moving" << endl;
     if (moveNum == 0) {
         moveNum++; // inc move count
         return BOOKMARK;
@@ -251,3 +250,4 @@ void Algorithm::printVisited() {
     }
 }
 
+REGISTER_ALGORITHM(Algorithm)

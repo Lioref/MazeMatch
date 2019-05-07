@@ -55,7 +55,7 @@ void MatchManager::loadPuzzles() {
             if (file.path().extension() != ".maze") continue; // if not shared lib skip to next file
             _singleton._currentFile = file.path().filename(); // store filename for registration
             // load library
-            }
         }
     }
 }
+
