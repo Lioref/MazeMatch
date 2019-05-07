@@ -8,10 +8,12 @@
 #include <map>
 #include <set>
 #include <tuple>
+#include <list>
 #include <cstdlib>
 #include <assert.h>
 #include "AbstractAlgorithm.h"
 #include "AlgorithmRegistration.h"
+#include <algorithm>
 
 
 class LeastFreqSearch : public AbstractAlgorithm {
@@ -47,6 +49,8 @@ private:
     int posiMod(int num, int div);
 
     std::map<Move, std::tuple<int, int>> getPossibleMovePositions();
+
+    AbstractAlgorithm::Move getLeastVisitedMove(std::map<AbstractAlgorithm::Move, std::tuple<int, int>> nonWallMoves);
 
     void foldVisitedMap();
 

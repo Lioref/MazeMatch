@@ -191,6 +191,32 @@ std::map<AbstractAlgorithm::Move, std::tuple<int, int>> LeastFreqSearch::getPoss
     return positions;
 }
 
+
+/// get least visited move
+AbstractAlgorithm::Move LeastFreqSearch::getLeastVisitedMove(map<AbstractAlgorithm::Move, std::tuple<int, int>> nonWallMoves) {
+    // erase the backtracking move if exists in map
+    nonWallMoves.erase(this->oppositeMoves[this->lastMove]);
+
+    // get min visited count
+    map<std::tuple<int, int>, int> posVisits;
+    int minVisits = -1;
+    for (auto&& [mv, pos] : nonWallMoves) {
+        minVisits = (visited[pos] < minVisits || minVisits < 0) ? visited[pos] : minVisits;
+    }
+
+    // create candidate map
+    list<AbstractAlgorithm::Move> minMoves;
+    for (auto&& [mv, pos] : nonWallMoves) {
+        if (visited[pos]==minVisits) {
+            minMoves.push_back(mv);
+        }
+    }
+    // choose random min action
+    auto minMovesItr = minMoves.begin();
+    advance(minMovesItr, rand() % minMoves.size());
+    return *minMovesItr;
+}
+
 /// required function called by game manager.
 /// returns move of enum type.
 AbstractAlgorithm::Move LeastFreqSearch::move() {
@@ -242,19 +268,7 @@ AbstractAlgorithm::Move LeastFreqSearch::move() {
         nonWallMoves.erase(this->oppositeMoves[this->lastMove]);
         // choose move that results in the least visited position
         int minFreq = -1;
-        Move minMove = BOOKMARK;
-        assert(!nonWallMoves.empty());
-        for (auto&& [move, pos] : nonWallMoves) {
-            if (minFreq < 0) { // first
-                minFreq = visited[pos];
-                minMove = move;
-            } else {
-                if (visited[pos] < minFreq) {
-                    minFreq = visited[pos];
-                    minMove = move;
-                }
-            }
-        }
+        Move minMove = getLeastVisitedMove(nonWallMoves);
         applyMove(minMove);
         return minMove;
     }
