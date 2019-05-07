@@ -267,7 +267,6 @@ AbstractAlgorithm::Move LeastFreqSearch::move() {
         // remove previous move TODO this is a problem if the only non wall move map is empty (shouldn't happen)
         nonWallMoves.erase(this->oppositeMoves[this->lastMove]);
         // choose move that results in the least visited position
-        int minFreq = -1;
         Move minMove = getLeastVisitedMove(nonWallMoves);
         applyMove(minMove);
         return minMove;
