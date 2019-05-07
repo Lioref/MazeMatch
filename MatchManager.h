@@ -27,7 +27,7 @@ private:
     // data members
     static MatchManager _singleton;
     string _currentFile;
-    map<string, Maze> _mazeMap;
+    map<string, shared_ptr<Maze>> _mazeMap;
     map<string, function<unique_ptr<AbstractAlgorithm>()>> _algMap;
     vector<void *> _libs;
 
