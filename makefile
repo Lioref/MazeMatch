@@ -12,7 +12,7 @@ CFLAGS		:= -std=c++17 -Wall -Wextra -Werror -pedantic-errors -fPIC
 
 EXE_TARGET	:= ex3
 EXE_FLAGS	:= -pthread -rdynamic -ldl -lstdc++fs
-EXE_OBJS	:= main.o AlgorithmRegistration.o
+EXE_OBJS	:= main.o AlgorithmRegistration.o MatchManager.o Parser.o Maze.o
 
 LIB_TARGET	:= Algorithm.so
 LIB_FLAGS	:= -shared -undefined dynamic_lookup
@@ -40,6 +40,6 @@ $(OBJS): %.o : %.cpp
 	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(DEPS) $(EXE_TARGET) $(LIB_TARGET)
+	rm -f $(OBJS) $(DEPS) $(EXE_TARGET)
 
 -include $(DEPS)
