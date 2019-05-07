@@ -7,6 +7,8 @@
 
 #define DEBUG 1
 
+// TODO - take care of file paths with / and without /
+
 namespace fs = std::filesystem;
 
 MatchManager MatchManager::_singleton;
@@ -27,6 +29,9 @@ void MatchManager::run() {
                 if (DEBUG) { // save logs for debug
                     gameManager.savePositionLog(outPath + mazeIt->first + "_" + algIt->first + ".log");
                 }
+            }
+            if (DEBUG) {
+                cout << "Algorithm: " << algIt->first << ", Maze: " << mazeIt->first << ", Succeeded in: " << numSteps << " steps" << endl;
             }
         }
     }

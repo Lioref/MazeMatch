@@ -11,7 +11,6 @@
 #include <list>
 #include <cstdlib>
 #include <assert.h>
-#include "AbstractAlgorithm.h"
 #include "AlgorithmRegistration.h"
 #include <algorithm>
 

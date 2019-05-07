@@ -92,7 +92,6 @@ int GameManager::run() {
     for (numSteps=0; numSteps<currentMaze->maxsteps; numSteps++) {
         // make the player move
         currentMove = player->move();
-
         if (currentMove == AbstractAlgorithm::BOOKMARK) {
             setBookmark();
         }
