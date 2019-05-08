@@ -1,10 +1,11 @@
+// Created by: Liore Finkelstein, Yoel Ross
+
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 #include "Maze.h"
 #include "AbstractAlgorithm.h"
-#include "LeastFreqSearch.h"
 #include <memory>
 
 class GameManager {
