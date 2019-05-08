@@ -24,7 +24,7 @@ LIB_OBJS3 	:= LeastFreqSearchMultiMarks.o
 LIB_OBJS 	:= LeastFreqSearch.so Algorithm.so LeastFreqSearchMultiMarks.so
 
 all: maze_tournament algorithm_lib1 algorithm_lib2
-libs: algorithm_lib1 algorithm_lib2
+libs: algorithm_lib1 algorithm_lib2 algorithm_lib3
 
 maze_tournament: $(EXE_TARGET)
 
