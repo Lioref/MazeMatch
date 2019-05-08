@@ -102,8 +102,8 @@ int getParamFromLine(string line, int lineNum) {
 }
 
 /// Parses lines 2-4 of the mazefile that contain the maze parameters: MaxSteps, Rows, Cols, validates params
-Parser::MazeInfo* Parser::parseMazeParams(ifstream& mazeFile, int* linesRead) {
-    MazeInfo* info = new MazeInfo();
+shared_ptr<Parser::MazeInfo> Parser::parseMazeParams(ifstream& mazeFile, int* linesRead) {
+    shared_ptr<MazeInfo> info = make_shared<MazeInfo>();
     int param;
     bool cont = true;
     bool firstError = true;
@@ -237,7 +237,7 @@ int Parser::parseMazeRep(int rows, int cols, ifstream &mazeFile, shared_ptr<Maze
 /* COMPLETE PARSING METHOD  */
 /// Parses maze from file to maze object, returns -2 for error in maze file path, -1 for error in maze representation, otherwise 0
 int Parser::parseMazeFile(shared_ptr<Maze> maze, filesystem::path mazePath) {
-    MazeInfo* info;
+    shared_ptr<MazeInfo> info;
     int linesRead = 0;
     //Check maze file exists
     ifstream mazeFile(mazePath);
@@ -247,13 +247,11 @@ int Parser::parseMazeFile(shared_ptr<Maze> maze, filesystem::path mazePath) {
     } else { //start parsing params
         info = parseMazeParams(mazeFile, &linesRead); //info file contains first params
         if (info->hasError) {
-            delete(info);
             return -1;
         }
         maze->maxsteps = info->maxsteps;
         maze->rows = info->rows;
         maze->cols = info->cols;
-        delete(info);
         // parse the maze into the matrix
         if (parseMazeRep(maze->rows, maze->cols, mazeFile, maze) == -1) {
             return -1;

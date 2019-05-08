@@ -38,7 +38,7 @@ private:
     };
 
     /// Parses first lines of maze file
-    MazeInfo* parseMazeParams(ifstream& mazeFile, int* linesRead);
+    shared_ptr<MazeInfo> parseMazeParams(ifstream& mazeFile, int* linesRead);
 
     /// match command args parsing utils
     bool isArgName(string arg);
