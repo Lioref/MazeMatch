@@ -42,7 +42,7 @@ private:
     void loadPuzzles();
     void printResults();
     void printSeperator(unsigned long len);
-
-
+    void printHeaderRow(list<string> mazeNames, unsigned long lenAlg, unsigned long lenMaze, unsigned long sepLen);
+    void printAlgoRow(string name, list<string> mazeNames, unsigned long algLen, unsigned long mazeLen, unsigned long sepLen);
 };
 
