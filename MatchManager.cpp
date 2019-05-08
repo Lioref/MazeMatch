@@ -1,9 +1,4 @@
 #include "MatchManager.h"
-#include "AbstractAlgorithm.h"
-#include "Parser.h"
-#include "GameManager.h"
-#include <filesystem>
-#include <dlfcn.h>
 
 #define DEBUG 0
 #define FILE_EXISTS -2
@@ -14,19 +9,22 @@ namespace fs = std::filesystem;
 MatchManager MatchManager::_singleton;
 
 void MatchManager::run() {
-    // init params
     string outPath = argMap["output"];
+
+    // iterate over all algorithm and maze combinations
     for (auto algIt=_singleton._algMap.begin() ; algIt != _singleton._algMap.end() ; ++algIt) {
         for (auto mazeIt=_singleton._mazeMap.begin() ; mazeIt != _singleton._mazeMap.end() ; ++mazeIt) {
-            // Check if output file already exists
+
             string fullOutPath = ((fs::path)outPath).append(mazeIt->first + "_" + algIt->first + ".output");
-            if (fs::exists(fullOutPath)) { // don't run alg on maze, as instructed in forum
+            // if output file already exists, don't run match (as instructed in forum)
+            if (fs::exists(fullOutPath)) {
                 _resTable[algIt->first][mazeIt->first] = FILE_EXISTS;
                 continue;
             }
             GameManager gameManager(mazeIt->second, (algIt->second)());
             int numSteps = gameManager.run();
-            _resTable[algIt->first][mazeIt->first] = numSteps;
+            _resTable[algIt->first][mazeIt->first] = numSteps; // log results
+
             if (fs::is_directory(outPath)) {
                 if (outPath != "")  {
                     gameManager.saveMoveLog(fullOutPath);
@@ -35,9 +33,6 @@ void MatchManager::run() {
                     string logOutPath = ((fs::path)outPath).append(mazeIt->first + "_" + algIt->first + ".log");
                     gameManager.savePositionLog(logOutPath);
                 }
-            }
-            if (DEBUG) {
-                cout << "Algorithm: " << algIt->first << ", Maze: " << mazeIt->first << ", Succeeded in: " << numSteps << " steps" << endl;
             }
         }
     }
@@ -57,9 +52,9 @@ void MatchManager::addAlgorithm(function<unique_ptr<AbstractAlgorithm>()> factor
 void MatchManager::loadLibs() const {
     void* lib_handle;
     if (fs::is_directory(_singleton.argMap["algorithm_path"])) {
-
         // Load all .so files from algorithm_path passed in command line args
         for (const auto & file : fs::directory_iterator(_singleton.argMap["algorithm_path"])) {
+
             if (file.path().extension() != ".so") continue; // if not shared lib skip to next file
             _singleton._currentFile = file.path().filename().stem(); // store filename for registration
             // load library
@@ -87,8 +82,7 @@ void MatchManager::cleanup() {
 void MatchManager::loadPuzzles() {
     Parser parser;
     if (fs::is_directory(argMap["maze_path"])) {
-
-        // Load all .so files from algorithm_path passed in command line args
+        // Load all .maze files from algorithm_path passed in command line args
         for (const auto & file : fs::directory_iterator(argMap["maze_path"])) {
             if (file.path().extension() != ".maze") continue; // if not maze file skip to next file
             // load puzzle
@@ -122,9 +116,9 @@ void MatchManager::printHeaderRow(list<string> mazeNames, unsigned long lenAlg, 
 void MatchManager::printAlgoRow(string name, list<string> mazeNames, unsigned long algLen, unsigned long mazeLen, unsigned long sepLen) {
     cout << "|" << name << string(algLen-name.size()+1, ' ') << "|";
     for (string& maze : mazeNames) {
-        if (_resTable[name][maze] == -1) {
+        if (_resTable[name][maze] == NOT_SOLVED) {
             cout << string(mazeLen-1, ' ') << _resTable[name][maze] << "|";
-        } else if (_resTable[name][maze] == -2) {
+        } else if (_resTable[name][maze] == FILE_EXISTS) {
             cout << string(mazeLen+1, ' ') << "|";
 
         } else {
