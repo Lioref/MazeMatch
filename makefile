@@ -10,7 +10,7 @@ endif
 
 CFLAGS		:= -std=c++17 -Wall -Wextra -Werror -pedantic-errors -fPIC
 
-EXE_TARGET	:= ex3
+EXE_TARGET	:= match
 EXE_FLAGS	:= -pthread -rdynamic -ldl -lstdc++fs
 EXE_OBJS	:= main.o AlgorithmRegistration.o MatchManager.o Parser.o Maze.o GameManager.o
 
