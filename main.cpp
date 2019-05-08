@@ -11,7 +11,7 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-    srand(3);
+    srand(time(NULL));
     Parser p;
     MatchManager& manager = MatchManager::getMatchManager();
     manager.argMap = p.getMatchArgs(argc, argv);

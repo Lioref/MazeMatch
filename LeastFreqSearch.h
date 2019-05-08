@@ -25,7 +25,7 @@ private:
     int xUpperBound = -1; // default
     int nextBookmarkSeq = 1;
     std::map<Move , Move > oppositeMoves;
-    std::map<std::tuple<int, int>, int> visited; //TODO replace this set with a map that saves frequencies
+    std::map<std::tuple<int, int>, int> visited;
     std::set<std::tuple<int, int>> walls;
     std::map<int ,std::tuple<int, int>> bookmarks; // maps position to bookmark number
     std::map<Move , std::string> moveNames;
