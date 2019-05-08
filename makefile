@@ -16,18 +16,21 @@ EXE_OBJS	:= main.o AlgorithmRegistration.o MatchManager.o Parser.o Maze.o GameMa
 
 LIB_TARGET1	:= Algorithm.so 
 LIB_TARGET2 := LeastFreqSearch.so 
+LIB_TARGET3 := LeastFreqSearchMultiMarks.so
 LIB_FLAGS	:= -shared -undefined dynamic_lookup
 LIB_OBJS1	:= Algorithm.o
 LIB_OBJS2 	:= LeastFreqSearch.o 
-LIB_OBJS 	:= LeastFreqSearch.so Algorithm.so
+LIB_OBJS3 	:= LeastFreqSearchMultiMarks.o 
+LIB_OBJS 	:= LeastFreqSearch.so Algorithm.so LeastFreqSearchMultiMarks.so
 
 all: maze_tournament algorithm_lib1 algorithm_lib2
-libs: algorithm_lib1 algorithm_lib2
+libs: algorithm_lib1 algorithm_lib2 algorithm_lib3
 
 maze_tournament: $(EXE_TARGET)
 
 algorithm_lib1: $(LIB_TARGET1)
 algorithm_lib2: $(LIB_TARGET2)
+algorithm_lib3: $(LIB_TARGET3)
 
 
 $(EXE_TARGET): $(EXE_OBJS)
@@ -38,6 +41,9 @@ $(LIB_TARGET1): $(LIB_OBJS1)
 
 $(LIB_TARGET2): $(LIB_OBJS2)
 	$(CC) $(LIB_OBJS2) -o $@ $(LIB_FLAGS)
+
+$(LIB_TARGET3): $(LIB_OBJS3)
+	$(CC) $(LIB_OBJS3) -o $@ $(LIB_FLAGS)
 
 SRCS := $(wildcard *.cpp)
 OBJS := $(SRCS:.cpp=.o)
