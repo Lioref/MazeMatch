@@ -221,9 +221,9 @@ AbstractAlgorithm::Move LeastFreqSearchMultiMarks::getLeastVisitedMove(map<Abstr
 /// returns move of enum type.
 AbstractAlgorithm::Move LeastFreqSearchMultiMarks::move() {
     // first move is to leave a bookmark, other wise randomly choose if to mark
-    float p = rand() / RAND_MAX; // float between 0 and 1
-    float updateThresh = (INIT_BOOKMARK_FREQ + div(moveNum+1, INCREASE_EPOCH).quot*INCREASE_INCR) / 100;
-    float currentThresh = min<float>(MAX_BOOKMARK_FREQ/100, updateThresh);
+    float p = ((float) rand()) / RAND_MAX; // float between 0 and 1
+    float updateThresh = (float) (INIT_BOOKMARK_FREQ + div(moveNum+1, INCREASE_EPOCH).quot*INCREASE_INCR) / 100;
+    float currentThresh = min<float>((float) MAX_BOOKMARK_FREQ/100, updateThresh);
     if (moveNum == 0 || p <= currentThresh) {
         moveNum++; // inc move count
         setBookmark();
