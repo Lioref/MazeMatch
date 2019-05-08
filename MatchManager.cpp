@@ -7,8 +7,6 @@
 
 #define DEBUG 0
 
-// TODO - take care of file paths with / and without /
-
 namespace fs = std::filesystem;
 
 MatchManager MatchManager::_singleton;
@@ -23,11 +21,12 @@ void MatchManager::run() {
             _resTable[algIt->first][mazeIt->first] = numSteps;
             if (fs::is_directory(outPath)) {
                 if (outPath != "")  {
-                    string fullOutPath = outPath + mazeIt->first + "_" + algIt->first + ".output";
+                    string fullOutPath = ((fs::path)outPath).append(mazeIt->first + "_" + algIt->first + ".output");;
                     gameManager.saveMoveLog(fullOutPath);
                 }
                 if (DEBUG) { // save logs for debug
-                    gameManager.savePositionLog(outPath + mazeIt->first + "_" + algIt->first + ".log");
+                    string logOutPath = ((fs::path)outPath).append(mazeIt->first + "_" + algIt->first + ".log");
+                    gameManager.savePositionLog(logOutPath);
                 }
             }
             if (DEBUG) {
