@@ -14,8 +14,13 @@
 #include "AlgorithmRegistration.h"
 #include <algorithm>
 
+#define INIT_BOOKMARK_FREQ 1
+#define INCREASE_EPOCH 100
+#define INCREASE_INCR 1
+#define MAX_BOOKMARK_FREQ 5
 
-class LeastFreqSearch : public AbstractAlgorithm {
+
+class LeastFreqSearchMultiMarks : public AbstractAlgorithm {
 private:
     /// private member fields
     int px;
@@ -58,7 +63,7 @@ private:
 public:
     /// empty constructer, initializes all included
     /// data structures.
-    LeastFreqSearch();
+    LeastFreqSearchMultiMarks();
 
     /// required function called by game manager.
     /// returns move of enum type.
