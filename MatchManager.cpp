@@ -6,6 +6,8 @@
 #include <dlfcn.h>
 
 #define DEBUG 0
+#define FILE_EXISTS -2
+#define NOT_SOLVED -1
 
 namespace fs = std::filesystem;
 
@@ -16,12 +18,17 @@ void MatchManager::run() {
     string outPath = argMap["output"];
     for (auto algIt=_singleton._algMap.begin() ; algIt != _singleton._algMap.end() ; ++algIt) {
         for (auto mazeIt=_singleton._mazeMap.begin() ; mazeIt != _singleton._mazeMap.end() ; ++mazeIt) {
+            // Check if output file already exists
+            string fullOutPath = ((fs::path)outPath).append(mazeIt->first + "_" + algIt->first + ".output");
+            if (fs::exists(fullOutPath)) { // don't run alg on maze, as instructed in forum
+                _resTable[algIt->first][mazeIt->first] = FILE_EXISTS;
+                continue;
+            }
             GameManager gameManager(mazeIt->second, (algIt->second)());
             int numSteps = gameManager.run();
             _resTable[algIt->first][mazeIt->first] = numSteps;
             if (fs::is_directory(outPath)) {
                 if (outPath != "")  {
-                    string fullOutPath = ((fs::path)outPath).append(mazeIt->first + "_" + algIt->first + ".output");;
                     gameManager.saveMoveLog(fullOutPath);
                 }
                 if (DEBUG) { // save logs for debug
@@ -115,8 +122,11 @@ void MatchManager::printHeaderRow(list<string> mazeNames, unsigned long lenAlg, 
 void MatchManager::printAlgoRow(string name, list<string> mazeNames, unsigned long algLen, unsigned long mazeLen, unsigned long sepLen) {
     cout << "|" << name << string(algLen-name.size()+1, ' ') << "|";
     for (string& maze : mazeNames) {
-        if (_resTable[name][maze] < 0) {
+        if (_resTable[name][maze] == -1) {
             cout << string(mazeLen-1, ' ') << _resTable[name][maze] << "|";
+        } else if (_resTable[name][maze] == -2) {
+            cout << string(mazeLen+1, ' ') << "|";
+
         } else {
             double precedingSpaces = mazeLen-ceil(log10(_resTable[name][maze]))+1;
             cout << string(precedingSpaces, ' ') << _resTable[name][maze] << "|";
