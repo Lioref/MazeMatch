@@ -107,7 +107,7 @@ int GameManager::run() {
             } else if (bookmarks.count(tempPosition) > 0) {
                 playerRow = tempPlayerRow;
                 playerCol = tempPlayerCol;
-                player->hitBookmark(1);
+                player->hitBookmark(bookmarks[tempPosition]);
 
             }
             else {  // regular move into empty space
