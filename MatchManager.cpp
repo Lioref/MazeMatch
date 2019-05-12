@@ -25,7 +25,7 @@ void MatchManager::run() {
             int numSteps = gameManager.run();
             _resTable[algIt->first][mazeIt->first] = numSteps; // log results
 
-            if (fs::is_directory(outPath)) {
+            if (fs::is_directory(fs::absolute((fs::path)outPath))) {
                 if (outPath != "")  {
                     gameManager.saveMoveLog(fullOutPath);
                 }
@@ -51,7 +51,9 @@ void MatchManager::addAlgorithm(function<unique_ptr<AbstractAlgorithm>()> factor
 
 void MatchManager::loadLibs() const {
     void* lib_handle;
-    if (fs::is_directory(_singleton.argMap["algorithm_path"])) {
+    filesystem::path alg_path = (filesystem::path) _singleton.argMap["algorithm_path"];
+    filesystem::path full_alg_path = filesystem::absolute(alg_path);
+    if (fs::is_directory(full_alg_path)) {
         // Load all .so files from algorithm_path passed in command line args
         for (const auto & file : fs::directory_iterator(_singleton.argMap["algorithm_path"])) {
 
@@ -81,7 +83,9 @@ void MatchManager::cleanup() {
 
 void MatchManager::loadPuzzles() {
     Parser parser;
-    if (fs::is_directory(argMap["maze_path"])) {
+    filesystem::path maze_path = (filesystem::path) _singleton.argMap["maze_path"];
+    filesystem::path full_maze_path = filesystem::absolute(maze_path);
+    if (fs::is_directory(full_maze_path)) {
         // Load all .maze files from algorithm_path passed in command line args
         for (const auto & file : fs::directory_iterator(argMap["maze_path"])) {
             if (file.path().extension() != ".maze") continue; // if not maze file skip to next file
