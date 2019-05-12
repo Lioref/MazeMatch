@@ -293,13 +293,13 @@ map<string, string> Parser::getMatchArgs(int argc, char** argv) {
         }
     }
     // Check for bad arguments and print error
-    if (!filesystem::is_directory(args["maze_path"])) {
+    if (!filesystem::is_directory(filesystem::absolute(args["maze_path"]))) {
         cout << "maze_path arg is not a valid directory" << endl;
     }
-    if (!filesystem::is_directory(args["algorithm_path"])) {
+    if (!filesystem::is_directory(filesystem::absolute(args["algorithm_path"]))) {
         cout << "algorithm_path arg is not a valid directory" << endl;
     }
-    if ((args["output"] != "") && (!filesystem::is_directory(args["output"]))) {
+    if ((args["output"] != "") && (!filesystem::is_directory(filesystem::absolute(args["output"])))) {
         cout << "output arg is not a valid directory" << endl;
     }
     return args;
