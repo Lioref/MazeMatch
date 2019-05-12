@@ -317,12 +317,20 @@ void LeastFreqSearchMultiMarks::hitBookmark(int seq) {
     // if we have no row bound, or the new one is better, update it
     bool reduce_bound = false;
     if (get<1>(relativePosition) != 0 && (yUpperBound < 0 || abs(get<1>(relativePosition)) < yUpperBound)) {
-        yUpperBound = abs(get<1>(relativePosition));
+        if (yUpperBound < 0) { yUpperBound = abs(get<1>(relativePosition)); }
+        else {
+            assert(yUpperBound > 0);
+            yUpperBound = gcd(abs(get<1>(relativePosition)), yUpperBound);
+        }
         reduce_bound = true;
     }
     // if we have no col bound, or the new one is better, update it
     if (get<0>(relativePosition) != 0 && (xUpperBound < 0 || abs(get<0>(relativePosition)) < xUpperBound)) {
-        xUpperBound = abs(get<0>(relativePosition));
+        if (xUpperBound < 0) { xUpperBound = abs(get<0>(relativePosition)); }
+        else {
+            assert(xUpperBound > 0);
+            xUpperBound = gcd(abs(get<0>(relativePosition)), xUpperBound);
+        }
         reduce_bound = true;
     }
     if (reduce_bound) {
@@ -354,6 +362,7 @@ void LeastFreqSearchMultiMarks::printVisited() {
         std::cout << "X: " << std::get<0>(first) << ", Y: " << std::get<1>(first) << "visited: " << second << std::endl;
     }
 }
+
 
 REGISTER_ALGORITHM(LeastFreqSearchMultiMarks)
 

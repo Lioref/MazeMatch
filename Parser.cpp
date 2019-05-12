@@ -199,7 +199,7 @@ int Parser::parseMazeRep(int rows, int cols, ifstream &mazeFile, shared_ptr<Maze
                 break;
             } else {
                 maze->setMatrixVal(i, j, ERROR); // ERROR in char
-                mazeErrorVector.push_back(make_tuple(i, j, currentChar));
+                mazeErrorVector.push_back(make_tuple(i+1, j+1, currentChar));
             }
             j = getNextCol(cols, j);
         }
