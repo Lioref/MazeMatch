@@ -288,7 +288,7 @@ map<string, string> Parser::getMatchArgs(int argc, char** argv) {
         string cleanArg = currentArg.substr(1, currentArg.size()-1); // remove '-' char from name
 
         // add to arg map if it matches one of the param names
-        if (isArgName(currentArg) and mapHasKey(args, cleanArg)) {
+        if (isArgName(currentArg) and mapHasKey(args, cleanArg) and (i+1)<argc) {
             args[cleanArg] = argv[i+1];
         }
     }
