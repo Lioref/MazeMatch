@@ -272,6 +272,18 @@ bool Parser::mapHasKey(const map<string, string> dict, string key) {
     return dict.count(key) > 0;
 }
 
+/// check if string can be converted to natural number
+bool Parser::isNumber(const string s) {
+    bool convertable = true;
+    for (const char& c : s) {
+        if (!isdigit(c)) {
+            convertable = false;
+            break;
+        }
+    }
+    return convertable;
+}
+
 /// parse maze match command line args
 map<string, string> Parser::getMatchArgs(int argc, char** argv) {
     // current working directory for default args
@@ -281,6 +293,7 @@ map<string, string> Parser::getMatchArgs(int argc, char** argv) {
     std::map<string, string> args;
     args["maze_path"] = args["algorithm_path"] = workingDir;
     args["output"] = ""; // this way we cant tell later if we need to create files or not
+    args["num_threads"] = 1;
 
     // scan argv and extract key value pairs
     for (int i=1; i<argc; i++) {
@@ -307,6 +320,9 @@ map<string, string> Parser::getMatchArgs(int argc, char** argv) {
     filesystem::path full_out_path = filesystem::absolute(out_path);
     if ((args["output"] != "") && (!filesystem::is_directory(full_out_path))) {
         cout << "output arg is not a valid directory" << endl;
+    }
+    if (!isNumber(args["num_threads"])) {
+        args["num_threads"] = "1";
     }
     return args;
 }

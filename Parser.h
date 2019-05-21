@@ -45,6 +45,7 @@ private:
     /// match command args parsing utils
     bool isArgName(string arg);
     bool mapHasKey(map<string, string> dict, string key);
+    bool isNumber(const string s);
 
 };
 
