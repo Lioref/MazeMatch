@@ -40,6 +40,19 @@ void MatchManager::run() {
     cleanup();
 }
 
+void MatchManager::run_threads() {
+    fillGameStack();
+    std::vector<std::thread> threads;
+    for (int i=0 ; i < stoi(_singleton.argMap["numThreads"]) ; i++) {
+        threads.emplace_back(&MatchManager::workerThread, this);
+    }
+    for (auto& thread : threads) {
+        thread.join();
+    }
+    printResults();
+    cleanup();
+}
+
 void MatchManager::setup() {
     MatchManager::loadLibs();
     MatchManager::loadPuzzles();
@@ -68,6 +81,59 @@ void MatchManager::loadLibs() const {
     }
     if (DEBUG) {
         cout << "Loaded " << _algMap.size() << " algorithms" << endl;
+    }
+}
+
+void MatchManager::fillGameStack() {
+    // iterate over all algorithm and maze combinations, add tuples representing games to game stack
+    for (auto algIt=_singleton._algMap.begin() ; algIt != _singleton._algMap.end() ; ++algIt) {
+        for (auto mazeIt=_singleton._mazeMap.begin() ; mazeIt != _singleton._mazeMap.end() ; ++mazeIt) {
+            // task stack - < <MazeName, Maze> , <AlgName, Alg> >
+            _games.emplace(make_tuple(make_tuple(mazeIt->first,mazeIt->second),make_tuple(algIt->first,algIt->second)));
+        }
+    }
+}
+
+void MatchManager::workerThread() {
+    while(true) {
+        unique_lock<std::mutex> taskLock(_singleton._taskMutex);
+        if (_games.empty()) { // no more games to run
+            taskLock.unlock();
+            return;
+        }
+        // task is of the form: < <MazeName, Maze> , <AlgName, AlgFactory> >
+        auto task = _games.top();
+        _games.pop();
+        taskLock.unlock();
+
+        // run game
+        string outPath = argMap["output"];
+        string mazeName = get<0>(get<0>(task));
+        string algName = get<0>(get<1>(task));
+
+        string fullOutPath = ((fs::path)outPath).append(mazeName + "_" + algName + ".output");
+        // if output file already exists, don't run match (as instructed in forum)
+        if (fs::exists(fullOutPath)) {
+            lock_guard<mutex> lock(_singleton._resultsMutex);
+            _resTable[algName][mazeName] = FILE_EXISTS;
+            continue;
+        }
+        GameManager gameManager(get<1>(get<0>(task)), get<1>(get<1>(task))());
+        int numSteps = gameManager.run();
+        {
+            lock_guard<mutex> lock(_resultsMutex);
+            _resTable[algName][mazeName] = numSteps; // log results
+        }
+        if (fs::is_directory(fs::absolute((fs::path)outPath))) {
+            if (outPath != "")  {
+                gameManager.saveMoveLog(fullOutPath);
+            }
+            if (DEBUG) { // save logs for debug
+                string logOutPath = ((fs::path)outPath).append(mazeName + "_" + algName + ".log");
+                gameManager.savePositionLog(logOutPath);
+            }
+        }
+
     }
 }
 
