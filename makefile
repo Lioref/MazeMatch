@@ -14,14 +14,14 @@ EXE_TARGET	:= match
 EXE_FLAGS	:= -pthread -rdynamic -ldl -lstdc++fs
 EXE_OBJS	:= main.o AlgorithmRegistration.o MatchManager.o Parser.o Maze.o GameManager.o
 
-LIB_TARGET1	:= Algorithm.so 
+LIB_TARGET1	:= NaiveMultiMarks.so
 LIB_TARGET2 := LeastFreqSearch.so 
 LIB_TARGET3 := LeastFreqSearchMultiMarks.so
 LIB_FLAGS	:= -shared -undefined dynamic_lookup
-LIB_OBJS1	:= Algorithm.o
+LIB_OBJS1	:= NaiveMultiMarks.o
 LIB_OBJS2 	:= LeastFreqSearch.o 
 LIB_OBJS3 	:= LeastFreqSearchMultiMarks.o 
-LIB_OBJS 	:= LeastFreqSearch.so Algorithm.so LeastFreqSearchMultiMarks.so
+LIB_OBJS 	:= LeastFreqSearch.so NaiveMultiMarks.so LeastFreqSearchMultiMarks.so
 
 all: maze_tournament algorithm_lib1 algorithm_lib2
 libs: algorithm_lib1 algorithm_lib2 algorithm_lib3
@@ -57,4 +57,4 @@ clean:
 	rm -f $(OBJS) $(DEPS) $(EXE_TARGET) $(LIB_OBJS)
 
 -include $(DEPS)
-	
+
