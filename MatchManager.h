@@ -40,8 +40,6 @@ public:
     /// Used by Algorithm registration to push factory function loaded from .so into algorithm-map data member
     static void addAlgorithm(function<unique_ptr<AbstractAlgorithm>()> factory);
 
-    void setMaxThreads(int numThreads) { this->_maxThreads = numThreads; }
-
     /// Loads shared libs and puzzles from path passed in command line arguments
     void setup();
 
