@@ -269,6 +269,7 @@ AbstractAlgorithm::Move LeastFreqSearch::move() {
         // choose move that results in the least visited position
         Move minMove = getLeastVisitedMove(nonWallMoves);
         applyMove(minMove);
+        this->moveNum++; // inc move count
         return minMove;
     }
 }
