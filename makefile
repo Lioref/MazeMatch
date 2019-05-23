@@ -1,7 +1,7 @@
 PCNAME	:= $(shell uname -n)
 OSNAME	:= $(shell uname)
 ifeq ($(PCNAME), nova)
-	CC	:= g++-5.3.0
+	CC	:= g++-8.3.0
 else ifeq ($(OSNAME), Darwin)
 	CC	:= g++-8
 else
@@ -23,7 +23,7 @@ LIB_OBJS2 	:= LeastFreqSearch.o
 LIB_OBJS3 	:= LeastFreqSearchMultiMarks.o 
 LIB_OBJS 	:= LeastFreqSearch.so NaiveMultiMarks.so LeastFreqSearchMultiMarks.so
 
-all: maze_tournament algorithm_lib1 algorithm_lib2
+all: maze_tournament 
 libs: algorithm_lib1 algorithm_lib2 algorithm_lib3
 
 maze_tournament: $(EXE_TARGET)
