@@ -258,7 +258,7 @@ AbstractAlgorithm::Move NaiveMultiMarks::move() {
     std::map<Move, std::tuple<int, int>> nonVisitedMoves;
     for (auto&& [move, pos] : nonWallMoves) {
         // save only non visited positions
-        if (visited[pos] == 0) {
+        if (visited.count(pos) == 0) {
             nonVisitedMoves[move] = pos;
         }
     }

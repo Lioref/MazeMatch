@@ -253,12 +253,11 @@ AbstractAlgorithm::Move VectorMultiMarks::move() {
         }
     }
     assert(nonWallMoves.size()>0);
-
     // filter out visited
     std::map<Move, std::tuple<int, int>> nonVisitedMoves;
     for (auto&& [move, pos] : nonWallMoves) {
         // save only non visited positions
-        if (visited[pos] == 0) {
+        if (visited.count(pos) == 0) {
             nonVisitedMoves[move] = pos;
         }
     }
@@ -272,7 +271,7 @@ AbstractAlgorithm::Move VectorMultiMarks::move() {
         return vector;
     }
     // if we are in the middle of a vector and we should continue
-    else if ((duration < VEC_LEN) && !(visited.count(candidateMoves[vector])) && !(walls.count(candidateMoves[vector]))) {
+    else if ((duration <= VEC_LEN) && (visited.count(candidateMoves[vector]) == 0) && (walls.count(candidateMoves[vector])==0)) {
         applyMove(vector);
         duration++;
         this->moveNum++; // inc move count
@@ -400,7 +399,7 @@ void VectorMultiMarks::printWalls() {
 void VectorMultiMarks::printVisited() {
     std::cout << "coordinates of visited points relative to starting player position:" << std::endl;
     for (auto [first, second] : visited) {
-        std::cout << "X: " << std::get<0>(first) << ", Y: " << std::get<1>(first) << "visited: " << second << std::endl;
+        std::cout << "X: " << std::get<0>(first) << ", Y: " << std::get<1>(first) << " | visited: " << second << std::endl;
     }
 }
 
