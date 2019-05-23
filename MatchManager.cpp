@@ -43,9 +43,10 @@ void MatchManager::run() {
 void MatchManager::run_threads() {
     fillGameStack();
     std::vector<std::thread> threads;
-    for (int i=0 ; i < std::stoi(_singleton.argMap["num_threads"]) ; i++) {
+    for (int i=0 ; i < std::stoi(_singleton.argMap["num_threads"]) - 1 ; i++) {
         threads.emplace_back(&MatchManager::workerThread, this);
     }
+    workerThread(); // main thread participates in work load
     for (auto& thread : threads) {
         thread.join();
     }
