@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <thread>
 #include <map>
 #include <functional>
 #include <memory>
@@ -9,6 +10,7 @@
 #include <math.h>
 #include <filesystem>
 #include <dlfcn.h>
+#include <mutex>
 
 #include "AbstractAlgorithm.h"
 #include "Parser.h"
@@ -44,6 +46,9 @@ public:
     /// Run all algorithm-maze combinations using GameManager class, logs scored in _resTable data member
     void run();
 
+    /// Runs all algorithm-maze combination in parallel using threads
+    void run_threads();
+
 private:
     // data members
     static MatchManager _singleton;
@@ -52,13 +57,19 @@ private:
     map<string, function<unique_ptr<AbstractAlgorithm>()>> _algMap; // maps algorithm-name to algorithm factory function
     vector<void *> _libs; // saves open dynamic libs
     ResTable _resTable; // logs match results used for printing to screen
-
+    // task stack - < <MazeName, Maze> , <AlgName, Alg> >
+    stack<tuple<tuple<string , shared_ptr<Maze>> , tuple<string , function<unique_ptr<AbstractAlgorithm>()>>>> _games;
+    mutex _resultsMutex;
+    mutex _taskMutex;
+    int _maxThreads;
 
     // methods
     MatchManager() = default;
     void loadLibs() const;
     void cleanup(); // clear data-sets and closes opened dynamic libs
     void loadPuzzles();
+    void fillGameStack();
+    void workerThread();
     void printResults();
     // Utilities for printResults
     void printSeperator(unsigned long len);
