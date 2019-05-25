@@ -31,6 +31,10 @@ void Maze::setStart(std::tuple<int,int> start) {
     this->start = start;
 }
 
+int Maze::getMaxSteps() {
+    return this->maxsteps;
+}
+
 std::ostream& operator<<(std::ostream& out, const Maze &maze) {
     out << endl;
     out << "PRINTING MAZE" << endl;

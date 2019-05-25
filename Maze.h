@@ -33,6 +33,8 @@ public:
 
     void setStart(std::tuple<int,int> start);
 
+    int getMaxSteps();
+
     friend std::ostream& operator<<(std::ostream& out, const Maze &maze);
 
     friend class Parser;
