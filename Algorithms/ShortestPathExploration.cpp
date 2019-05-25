@@ -273,6 +273,7 @@ AbstractAlgorithm::Move ShortestPathExploration::move() {
         // choose move that results in the least visited position
         Move moveToClosestUnvisitedCell = findClosestUnvisitedCellMove();
         applyMove(moveToClosestUnvisitedCell);
+        this->moveNum++; //TODO should I increment move num? why isn't it in post move update?
         return moveToClosestUnvisitedCell;
     }
 }
@@ -363,6 +364,8 @@ void ShortestPathExploration::printVisited() {
         std::cout << "X: " << std::get<0>(first) << ", Y: " << std::get<1>(first) << "visited: " << second << std::endl;
     }
 }
+
+/* new functions */
 
 /// returns all possible moves that are known to not be walls
 std::map<ShortestPathExploration::Move,std::tuple<int,int>> ShortestPathExploration::getNonWallMoves(int x, int y) {

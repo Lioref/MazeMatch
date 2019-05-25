@@ -97,6 +97,8 @@ public:
     /// print the points the player has visited
     void printVisited();
 
+    /* New functions */
+
     tuple<int,int> getBoundedCoords(int x, int y);
 
     /// Gets possible non-wall moves from current player position

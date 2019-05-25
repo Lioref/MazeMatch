@@ -1,6 +1,3 @@
-#ifndef MAZEMATCH_ALGORITHM_H
-#define MAZEMATCH_ALGORITHM_H
-
 #pragma once
 
 #include <iostream>
@@ -99,5 +96,3 @@ public:
 };
 
 
-
-#endif //MAZEMATCH_ALGORITHM_H
