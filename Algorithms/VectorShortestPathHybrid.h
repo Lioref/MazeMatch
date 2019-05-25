@@ -15,7 +15,7 @@
 #define INCREASE_EPOCH 100
 #define INCREASE_INCR 1
 #define MAX_BOOKMARK_FREQ 5
-#define VEC_LEN 5
+#define VEC_LEN 3
 
 using namespace std;
 
