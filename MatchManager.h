@@ -33,7 +33,7 @@ class MatchManager {
 public:
     // data members
     map<string, string> argMap; // maps command line arguments to the passed values (keys: "maze_path", "output", "algorithm_path")
-
+    map<string, int> mazeMaxSteps; // maps maze name to max steps
     // methods
     static MatchManager& getMatchManager() { return _singleton; }
 
@@ -47,7 +47,12 @@ public:
     void run();
 
     /// Runs all algorithm-maze combination in parallel using threads
-    void run_threads();
+    void runThreads();
+
+    /// Sums all algorithm scores and prints them in winning order
+    void printMatchWinner();
+
+    tuple<string,int> sumAlgScores(string algName);
 
 private:
     // data members
@@ -61,7 +66,6 @@ private:
     stack<tuple<tuple<string , shared_ptr<Maze>> , tuple<string , function<unique_ptr<AbstractAlgorithm>()>>>> _games;
     mutex _resultsMutex;
     mutex _taskMutex;
-    int _maxThreads;
 
     // methods
     MatchManager() = default;

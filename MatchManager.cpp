@@ -1,6 +1,6 @@
 #include "MatchManager.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #define FILE_EXISTS -2
 #define NOT_SOLVED -1
 
@@ -40,7 +40,7 @@ void MatchManager::run() {
     cleanup();
 }
 
-void MatchManager::run_threads() {
+void MatchManager::runThreads() {
     fillGameStack();
     std::vector<std::thread> threads;
     for (int i=0 ; i < std::stoi(_singleton.argMap["num_threads"]) - 1 ; i++) {
@@ -51,10 +51,13 @@ void MatchManager::run_threads() {
         thread.join();
     }
     printResults();
+    printMatchWinner(); // TODO erase before handing in assignment
     cleanup();
 }
 
 void MatchManager::setup() {
+    _algMap.clear();
+    _mazeMap.clear();
     MatchManager::loadLibs();
     MatchManager::loadPuzzles();
 }
@@ -73,6 +76,7 @@ void MatchManager::loadLibs() const {
 
             if (file.path().extension() != ".so") continue; // if not shared lib skip to next file
             _singleton._currentFile = file.path().filename().stem(); // store filename for registration
+
             // load library
             lib_handle = dlopen(file.path().c_str(), RTLD_LAZY);
             if (lib_handle) {
@@ -82,6 +86,7 @@ void MatchManager::loadLibs() const {
     }
     if (DEBUG) {
         cout << "Loaded " << _algMap.size() << " algorithms" << endl;
+        cout << "Loaded " << _libs.size() << " libs" << endl;
     }
 }
 
@@ -160,7 +165,9 @@ void MatchManager::loadPuzzles() {
             shared_ptr<Maze> mazep = make_shared<Maze>();
             int rc = parser.parseMazeFile(mazep, file.path());
             if (rc >= 0) {
-                _mazeMap[file.path().filename().stem()] = mazep;
+                string mazeName = file.path().filename().stem();
+                _mazeMap[mazeName] = mazep;
+                mazeMaxSteps[mazeName] = mazep->getMaxSteps();
             }
         }
     }
@@ -227,4 +234,46 @@ void MatchManager::printResults() {
         printAlgoRow(alg, mazeNames, algMaxLen, mazeMaxLen, sepLen);
     }
 }
+
+
+bool sortbysec(const tuple<string, int>& a,
+               const tuple<string, int>& b)
+{
+    return (get<1>(a) < get<1>(b));
+}
+
+/// Sums all algorithm scores and prints them in winning order
+void MatchManager::printMatchWinner() {
+    cout << "Match Winners: " << endl;
+    //maps algorithm-name to maze-name to number of steps
+    vector<tuple<string,int>> algorithm_scores;
+    for (auto iter = _singleton._resTable.begin() ; iter != _singleton._resTable.end() ; ++iter) {
+        algorithm_scores.push_back(sumAlgScores(iter->first));
+    }
+    sort(algorithm_scores.begin(), algorithm_scores.end(), sortbysec);
+    // print score vector
+    int i=1;
+    for (auto iter = algorithm_scores.begin() ; iter != algorithm_scores.end() ; ++iter) {
+        cout << i << ". " << get<0>(*iter) << ": " << get<1>(*iter) << endl;
+        i++;
+    }
+
+}
+
+tuple<string,int> MatchManager::sumAlgScores(string algName) {
+    int scoreSum = 0;
+    for (auto iter = _singleton._resTable[algName].begin() ; iter != _singleton._resTable[algName].end() ; ++iter) {
+        if (iter->second >= 0) {
+            scoreSum += iter->second;
+        }
+        else if (iter->second == -1) {
+            scoreSum += 3*mazeMaxSteps[iter->first];
+        }
+    }
+    return make_tuple(algName,scoreSum);
+}
+
+
+
+
 
