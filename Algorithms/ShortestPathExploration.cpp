@@ -386,7 +386,6 @@ std::map<ShortestPathExploration::Move,std::tuple<int,int>> ShortestPathExplorat
 /// runs lazy BFS algorithm to find the shortest path to a new cell. Returns the Move the player should make to advance
 /// to the unknown cell.
 ShortestPathExploration::Move ShortestPathExploration::findClosestUnvisitedCellMove() {
-    cout << "In new shortest path function!" << endl;
     // Maps coordinates to their "predecessor" step on the shortest path
     map<tuple<int,int> , tuple<ShortestPathExploration::Move , tuple<int,int>>> pathsMap;
     set<tuple<int,int>> blackNodes;
