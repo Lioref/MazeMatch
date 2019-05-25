@@ -11,14 +11,13 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-
     srand(time(NULL));
     Parser p;
     MatchManager& manager = MatchManager::getMatchManager();
     manager.argMap = p.getMatchArgs(argc, argv);
 
     manager.setup();
-    manager.run_threads();
+    manager.runThreads();
     return 0;
 
 }
