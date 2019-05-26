@@ -108,6 +108,7 @@ void VectorShortestPathHybrid::applyMove(Move direction) {
         assert(direction != BOOKMARK);
         moveDown();
     }
+    this->moveNum++; // inc move count
     // add new position to visited
     postMoveUpdate();
 }
@@ -238,15 +239,11 @@ AbstractAlgorithm::Move VectorShortestPathHybrid::move() {
         setBookmark();
         return BOOKMARK;
     }
-
-    // get all possible candidate moves
     std::map<Move, std::tuple<int, int>> candidateMoves = getPossibleMovePositions(px,py);
-
     // filter out walls
     std::map<Move, std::tuple<int, int>> nonWallMoves;
     for (auto&& [move, pos] : candidateMoves) {
-        // check if current move matches a wall (under current bound)
-        if (walls.count(pos) == 0) {
+        if (walls.count(pos) == 0) { // check if current move matches a wall (under current bound)
             nonWallMoves[move] = pos;
         }
     }
@@ -254,57 +251,41 @@ AbstractAlgorithm::Move VectorShortestPathHybrid::move() {
     // filter out visited
     std::map<Move, std::tuple<int, int>> nonVisitedMoves;
     for (auto&& [move, pos] : nonWallMoves) {
-        // save only non visited positions
-        if (visited.count(pos) == 0) {
+        if (visited.count(pos) == 0) { // save only non visited positions
             nonVisitedMoves[move] = pos;
         }
-    }
-
-    // pick a initial vector
+    } // pick a initial vector
     if (duration == 0) {
         vector = static_cast<Move>(rand() % 4); // choose at random
         applyMove(vector); // take a step in the direction of the vector
         duration++; // increment duration of vector movement
-        this->moveNum++; // inc move count
         return vector;
-    }
-        // if we are in the middle of a vector and we should continue
+    } // if we are in the middle of a vector and we should continue
     else if ((duration <= VEC_LEN) && (visited.count(candidateMoves[vector]) == 0) && (walls.count(candidateMoves[vector])==0)) {
         applyMove(vector);
         duration++;
-        this->moveNum++; // inc move count
         return vector;
-    }
-        // if other unvisited moves exist, pick one and start a new vector
-    else if (nonVisitedMoves.size() > 0) {
-        // pick random non visited direction as new vector
+    } // if other unvisited moves exist, pick one and start a new vector
+    else if (nonVisitedMoves.size() > 0) { // pick random non visited direction as new vector
         auto itr = nonVisitedMoves.begin();
         advance(itr, rand() % nonVisitedMoves.size());
         vector = itr->first;
-
-        // reset the vector duration
-        duration = 1;
+        duration = 1; // reset the vector duration
         applyMove(vector);
-        this->moveNum++; // inc move count
         return vector;
-    }
-        // if only one non wall move exists, take it
+    } // if only one non wall move exists, take it
     else if (nonWallMoves.size() == 1) {
         vector = oppositeMoves[lastMove];
         duration = 1;
         applyMove(vector);
-        this->moveNum++; // inc move count
         return vector;
-    }
-        // if all candidates have been visited, but there is more than a single non wall move, find the best direction to unvisited cell
+    } // if all candidates have been visited, but there is more than a single non wall move, find the best direction to unvisited cell
     else if (nonWallMoves.size() >1) {
         vector = findClosestUnvisitedCellMove();
         duration = 1;
         applyMove(vector);
-        this->moveNum++;
         return vector;
-    }
-        // this case shouldn't be reached. assert to avoid silent bugs.
+    } // this case shouldn't be reached. assert to avoid silent bugs.
     else {assert(0);}
 }
 
