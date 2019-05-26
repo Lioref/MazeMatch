@@ -240,9 +240,7 @@ AbstractAlgorithm::Move ShortestPathExploration::move() {
         setBookmark();
         return BOOKMARK;
     }
-
     auto nonWallMoves = getNonWallMoves(px, py);
-
     assert(nonWallMoves.size()>0);
     // filter out visited
     std::map<Move, std::tuple<int, int>> nonVisitedMoves;
@@ -252,7 +250,6 @@ AbstractAlgorithm::Move ShortestPathExploration::move() {
             nonVisitedMoves[move] = pos;
         }
     }
-
     // at least one not visited option exists, pick one at random
     if (!nonVisitedMoves.empty()) {
         auto it = nonVisitedMoves.begin();
@@ -262,7 +259,6 @@ AbstractAlgorithm::Move ShortestPathExploration::move() {
         this->moveNum++; // inc move count
         return randMove; // return chosen move
     }
-
     // if only one move is not a wall, we must backtrack. take opposite of last action.
     if (nonWallMoves.size()==1) {
         applyMove(oppositeMoves[lastMove]);

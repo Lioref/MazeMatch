@@ -1,6 +1,4 @@
-
-#ifndef MAZEMATCH_ALGORITHM_H
-#define MAZEMATCH_ALGORITHM_H
+// Created by Yoel Ross and Liore Finkelstein
 
 #pragma once
 
@@ -19,6 +17,10 @@
 #define INCREASE_EPOCH 100
 #define INCREASE_INCR 1
 #define MAX_BOOKMARK_FREQ 5
+
+/* This algorithm randomly walks the maze, remembering walls and cells it has visited, preffering new cells over visited ones.
+ * When the algorithm finds that it has visited all of it's immediate neighbours, it runs an adapted BFS algorithm
+ * to find the shortest path to an unvisited cell, and proceeds in that direction. */
 
 using namespace std;
 
@@ -124,8 +126,6 @@ public:
 };
 
 
-
-#endif //MAZEMATCH_ALGORITHM_H
 
 
 

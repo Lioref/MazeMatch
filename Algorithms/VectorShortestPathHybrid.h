@@ -21,7 +21,7 @@
 
 /* This algorithm tries to move in vectors of size VEC_LEN, meaning it tries to continue moving in the same direction,
  * if possible, for VEC_LEN steps. When the algorithm finds that it has visited all of it's immediate neighbours, it
- * runs an adapted BFS algorithms to find the shortest path to an unvisited cell, and proceeds in that direction */
+ * runs an adapted BFS algorithm to find the shortest path to an unvisited cell, and proceeds in that direction */
 
 using namespace std;
 
