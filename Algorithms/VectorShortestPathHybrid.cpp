@@ -432,13 +432,13 @@ AbstractAlgorithm::Move VectorShortestPathHybrid::findClosestUnvisitedCellMove()
             break;
         }
         // get all possible moves (neighbours) and add to grey nodes queue
-        map<Move, tuple<int,int>> nonWallMoves = getNonWallMoves(get<0>(u),get<1>(u)); //TODO is with backtracking?
+        map<Move, tuple<int,int>> nonWallMoves = getNonWallMoves(get<0>(u),get<1>(u));
         for (auto iter = nonWallMoves.begin() ; iter != nonWallMoves.end(); ++iter) {
             assert(nonWallMoves.size() > 0);
-            //if not in black && not in grey add to grey list
             tuple<int,int> nextMoveCoords = iter->second;
             nextMoveCoords = getBoundedCoords(get<0>(nextMoveCoords), get<1>(nextMoveCoords));
             Move nextMove = iter->first;
+            //if not in black && not in grey add to grey list
             if (isWhite(greyNodes, blackNodes, nextMoveCoords)) {
                 greyNodes.push_back(nextMoveCoords);
                 pathsMap.emplace(nextMoveCoords , make_tuple(nextMove, u));

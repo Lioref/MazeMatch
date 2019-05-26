@@ -273,7 +273,7 @@ AbstractAlgorithm::Move ShortestPathExploration::move() {
         // choose move that results in the least visited position
         Move moveToClosestUnvisitedCell = findClosestUnvisitedCellMove();
         applyMove(moveToClosestUnvisitedCell);
-        this->moveNum++; //TODO should I increment move num? why isn't it in post move update?
+        this->moveNum++;
         return moveToClosestUnvisitedCell;
     }
 }
@@ -402,7 +402,7 @@ ShortestPathExploration::Move ShortestPathExploration::findClosestUnvisitedCellM
             break;
         }
         // get all possible moves (neighbours) and add to grey nodes queue
-        map<Move, tuple<int,int>> nonWallMoves = getNonWallMoves(get<0>(u),get<1>(u)); //TODO is with backtracking?
+        map<Move, tuple<int,int>> nonWallMoves = getNonWallMoves(get<0>(u),get<1>(u));
         for (auto iter = nonWallMoves.begin() ; iter != nonWallMoves.end(); ++iter) {
             assert(nonWallMoves.size() > 0);
             //if not in black && not in grey add to grey list

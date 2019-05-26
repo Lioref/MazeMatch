@@ -22,7 +22,6 @@
 
 using namespace std;
 
-
 class ShortestPathExploration : public AbstractAlgorithm {
 private:
     /// private member fields

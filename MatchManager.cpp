@@ -1,6 +1,6 @@
 #include "MatchManager.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #define FILE_EXISTS -2
 #define NOT_SOLVED -1
 
@@ -51,7 +51,9 @@ void MatchManager::runThreads() {
         thread.join();
     }
     printResults();
-    printMatchWinner(); // TODO erase before handing in assignment
+    if (DEBUG) {
+        printMatchWinner();
+    }
     cleanup();
 }
 
