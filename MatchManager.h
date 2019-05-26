@@ -43,7 +43,7 @@ public:
     /// Loads shared libs and puzzles from path passed in command line arguments
     void setup();
 
-    /// Run all algorithm-maze combinations using GameManager class, logs scored in _resTable data member
+    /// Run all algorithm-maze combinations using GameManager class, logs scored in _resTable data member, without threads
     void run();
 
     /// Runs all algorithm-maze combination in parallel using threads
